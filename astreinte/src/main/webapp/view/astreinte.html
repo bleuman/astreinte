@@ -2,47 +2,39 @@
 <html>
 <body>
 	<form prenom="astreinteform">
-		<table>
-			<tr>
-				<td><label>QC::::[{{astreinte.id}}]</label>
-					</td>
-				<td>
-				
-				<select ng-model="astreinte.idQC" ng-options="tck.id as tck.qc for tck in listeTickets">
-				</select>
-				
-				</td>
+	<div class="row">
+	<div class="col-sm-2" style="background-color:lavender;">QC[{{astreinte.id}}]</div>			
+	<div class="col-sm-2" style="background-color:lavender;"><select ng-model="astreinte.idQC" ng-options="tck.id as tck.qc for tck in listeTickets" ></select></div>
+	</div>
+	<div class="row">
+	<div class="col-sm-2" style="background-color:lavender;">Ressource</div>
+	<div class="col-sm-2" style="background-color:lavender;"><select ng-model="astreinte.ressource.id" ng-options="res.id as res.nom group by res.role for res in listeRessources" ></select></div>
+		</div>
+		
+	<div class="row">
+	<div class="col-sm-2" style="background-color:lavender;">Type Astreinte</div>
+	<div class="col-sm-2" style="background-color:lavender;"><select ng-model="astreinte.typeAstreinte.id" ng-options="tp.id as tp.libelle for tp in typesAstreinteList" ></select></div>
+	</div>
+	
+	<div class="row">
+	<div class="col-sm-2" style="background-color:lavender;">Date</div>
+	<div class="col-sm-2" style="background-color:lavender;"><input type="date" ng-model="astreinte.dateAstreinte" ng-required="true" /></div>
+	</div>
+	
+	<div class="row">
+	<div class="col-sm-1" style="background-color:lavender;">Debut</div>
+	<div class="col-sm-1" style="background-color:lavender;"><input type="time" ng-model="astreinte.hdebut" /></div>
 
-				<td><label>Ressource *</label></td>
-				<td><select ng-model="astreinte.ressource.id" ng-options="res.id as res.nom group by res.role for res in listeRessources" >
-				</select></td>
-				<td>Type Astreinte</td>
-				<td><select ng-model="astreinte.typeAstreinte.id" ng-options="tp.id as tp.libelle for tp in typesAstreinteList">
-<!-- 						<option value="1">Sur site</option> -->
-<!-- 						<option value="2">Téléphonique</option> -->
-				</select></td>
-				<h2>{{astreinte.typeAstreinte.id}}</h2>
-			</tr>
-			<tr>
-				<td><label>Date *</label></td>
-				<td><input type="date" ng-model="astreinte.dateAstreinte"
-					ng-required="true" /></td>
+	<div class="col-sm-1" style="background-color:lavender;">Fin</div>
+	<div class="col-sm-1" style="background-color:lavender;"><input type="time" ng-model="astreinte.hfin" /></div>
+	</div>
+	
+	<div class="row">
+	<div class="col-sm-2" style="background-color:lavender;"><input type="submit" value="save" ng-click="save()" ng-disabled="astreinteform.$invalid" /></div>
+	<div class="col-sm-2" style="background-color:lavender;"><input type="reset" value="clear" ng-click="reset()" /></div>
+	</div>
+			
 
-				<td><label>Debut *</label></td>
-				<td><input type="time" ng-model="astreinte.hdebut" /></td>
-				<td><label>Fin *</label></td>
-				<td><input type="time" ng-model="astreinte.hfin" /></td>
-			</tr>
-			<tr>
-				<td></td>
-				<td></td>
-
-				<td><input type="submit" value="save" ng-click="save()"
-					ng-disabled="astreinteform.$invalid" /></td>
-				<td><input type="reset" value="clear" ng-click="reset()" /></td>
-				<td></td>
-			</tr>
-		</table>
 	</form>
 
 	<fieldset>
