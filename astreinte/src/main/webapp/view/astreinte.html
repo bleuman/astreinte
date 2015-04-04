@@ -1,59 +1,79 @@
 <!DOCTYPE html>
 <html>
-<body>
-	<form prenom="astreinteform">
-	<div class="row">
-	<div class="col-sm-2" style="background-color:lavender;">QC[{{astreinte.id}}]</div>			
-	<div class="col-sm-2" style="background-color:lavender;"><select ng-model="astreinte.idQC" ng-options="tck.id as tck.qc for tck in listeTickets" ></select></div>
-	</div>
-	<div class="row">
-	<div class="col-sm-2" style="background-color:lavender;">Ressource</div>
-	<div class="col-sm-2" style="background-color:lavender;"><select ng-model="astreinte.ressource.id" ng-options="res.id as res.nom group by res.role for res in listeRessources" ></select></div>
-		</div>
-		
-	<div class="row">
-	<div class="col-sm-2" style="background-color:lavender;">Type Astreinte</div>
-	<div class="col-sm-2" style="background-color:lavender;"><select ng-model="astreinte.typeAstreinte.id" ng-options="tp.id as tp.libelle for tp in typesAstreinteList" ></select></div>
-	</div>
-	
-	<div class="row">
-	<div class="col-sm-2" style="background-color:lavender;">Date</div>
-	<div class="col-sm-2" style="background-color:lavender;"><input type="date" ng-model="astreinte.dateAstreinte" ng-required="true" /></div>
-	</div>
-	
-	<div class="row">
-	<div class="col-sm-1" style="background-color:lavender;">Debut</div>
-	<div class="col-sm-1" style="background-color:lavender;"><input type="time" ng-model="astreinte.hdebut" /></div>
 
-	<div class="col-sm-1" style="background-color:lavender;">Fin</div>
-	<div class="col-sm-1" style="background-color:lavender;"><input type="time" ng-model="astreinte.hfin" /></div>
+<body>
+<div class="page-header">
+    <h1>Gestion Astreinte {{astreinte.id}}</h1>    
+      <div class="btn-group">
+   
+    <div class="btn-group">
+      <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+      Menu <span class="caret"></span></button>
+      <ul class="dropdown-menu" role="menu">
+      
+        
+       <li> <a href="/#/astreinte">Astreinte</a></li>
+	<li><a href="/#/ticket">Ticket</a></li>
+      </ul>
+    </div>
+  </div>  
+  </div>
+
+  
+ <div class="jumbotron">
+ 	
+	<form  class="form-inline" name="astreinteform" role="form"  >
+	
+	<div class="form-group">
+	<label for="idQC">QC</label>			
+	<select class="form-control" id="idQC" ng-model="astreinte.idQC" ng-options="tck.id as tck.qc for tck in listeTickets" ></select>
+	
+	<label for="ressource">Ressource</label>
+	<select class="form-control" ng-model="astreinte.ressource.id" ng-options="res.id as res.nom group by res.role for res in listeRessources" ></select>
+	
+	<label for="typeAstreinte">Type astreinte</label>
+	<select class="form-control" id="typeAstreinte" ng-model="astreinte.typeAstreinte.id" ng-options="tp.id as tp.libelle for tp in typesAstreinteList" ></select>
 	</div>
 	
-	<div class="row">
-	<div class="col-sm-2" style="background-color:lavender;"><input type="submit" value="save" ng-click="save()" ng-disabled="astreinteform.$invalid" /></div>
-	<div class="col-sm-2" style="background-color:lavender;"><input type="reset" value="clear" ng-click="reset()" /></div>
+	<div class="form-group">
+	<label for="adate">Date</label>
+	<input class="form-control" id="adate" type="date" ng-model="astreinte.dateAstreinte" ng-required="true" />
+	
+	<label for="hdebut">Debut</label>
+	<input class="form-control" id="hdebut" type="time" ng-model="astreinte.hdebut" />
+
+	<label for="hfin">Fin</label>
+<input class="form-control" id="hfin"type="time" ng-model="astreinte.hfin" />
+	</div>
+	
+	<div class="form-group">
+<input type="submit" class="btn btn-success btn-lg" value="save" ng-click="save()" ng-disabled="astreinteform.$invalid" />
+<input type="reset" class="btn btn-info btn-lg" value="clear" ng-click="reset()" />
 	</div>
 			
 
 	</form>
-
-	<fieldset>
-		<table border="1">
+</div>
+<div class="jumbotron">
+	
+		<table class="table table-striped" >
+		<thead>
 			<tr>
-				<td>Id</td>
-				<td>QC</td>
-				<td>Name</td>
-				<td>LastName</td>
-				<td>Date</td>
-				<td>Debut</td>
-				<td>Fin</td>
-				<td>K</td>
-				<td>Charge</td>
-				<td>Action</td>
+				<th>Id</th>
+				<th>QC</th>
+				<th>Name</th>
+				<th>LastName</th>
+				<th>Date</th>
+				<th>Debut</th>
+				<th>Fin</th>
+				<th>K</th>
+				<th>Charge</th>
+				<th>Action</th>
 			</tr>
+			</thead>
 			<tr ng-repeat="astr in listAstreinte track by $index">
 				<td><a href ng-click="edit(astr)"> {{astr.id}} </a></td>
-				<td>{{astr.idQC}}</td>
+				<td>{{listeTickets[astr.idQC].qc}}</td>
 				<td>{{astr.ressource.prenom}}</td>
 				<td>{{astr.ressource.nom}}</td>
 				<td>{{astr.dateAstreinte | date :"dd/MM/yyyy"}}</td>
@@ -64,14 +84,15 @@
 				<td>{{astr.charge | number:2}}</td>
 				<td><a href ng-click="remove(astr)">Remover</a></td>
 			</tr>
+			<tfoot>
 			<tr>
-			<td colspan="8">Charge Totale</td>
-			<td>{{calculate(listAstreinte)  | number:2}}</td>
-			<td>%</td>
+			<th colspan="8">Charge Totale</th>
+			<th>{{calculate(listAstreinte)  | number:2}}</th>
+			<th>JH</th>
 			</tr>
+			</tfoot>
 		</table>
-	</fieldset>
-	<a href="/#/astreinte">Astreinte</a>
-	<a href="/#/ticket">Ticket</a>
+</div>
+	
 </body>
 </html>
