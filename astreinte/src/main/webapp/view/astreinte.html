@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<body>
+	<form prenom="astreinteform">
+		<table>
+			<tr>
+				<td><label>QC[{{astreinte.id}}]</label>
+					</td>
+				<td>
+				
+				<select ng-model="astreinte.idQC" ng-options="tck.id as tck.qc for tck in listeTickets">
+				</select>
+				
+				</td>
+
+				<td><label>Ressource *</label></td>
+				<td><select ng-model="astreinte.ressource.id" ng-options="res.id as res.nom group by res.role for res in listeRessources" >
+				</select></td>
+				<td>Type Astreinte</td>
+				<td><select ng-model="astreinte.typeAstreinte.id" ng-options="tp.id as tp.libelle for tp in typesAstreinteList">
+<!-- 						<option value="1">Sur site</option> -->
+<!-- 						<option value="2">Téléphonique</option> -->
+				</select></td>
+				<h2>{{astreinte.typeAstreinte.id}}</h2>
+			</tr>
+			<tr>
+				<td><label>Date *</label></td>
+				<td><input type="date" ng-model="astreinte.dateAstreinte"
+					ng-required="true" /></td>
+
+				<td><label>Debut *</label></td>
+				<td><input type="time" ng-model="astreinte.hdebut" /></td>
+				<td><label>Fin *</label></td>
+				<td><input type="time" ng-model="astreinte.hfin" /></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td></td>
+
+				<td><input type="submit" value="save" ng-click="save()"
+					ng-disabled="astreinteform.$invalid" /></td>
+				<td><input type="reset" value="clear" ng-click="reset()" /></td>
+				<td></td>
+			</tr>
+		</table>
+	</form>
+
+	<fieldset>
+		<table border="1">
+			<tr>
+				<td>Id</td>
+				<td>QC</td>
+				<td>Name</td>
+				<td>LastName</td>
+				<td>Date</td>
+				<td>Debut</td>
+				<td>Fin</td>
+				<td>K</td>
+				<td>Charge</td>
+				<td>Action</td>
+			</tr>
+			<tr ng-repeat="astr in listAstreinte track by $index">
+				<td><a href ng-click="edit(astr)"> {{astr.id}} </a></td>
+				<td>{{astr.idQC}}</td>
+				<td>{{astr.ressource.prenom}}</td>
+				<td>{{astr.ressource.nom}}</td>
+				<td>{{astr.dateAstreinte | date :"dd/MM/yyyy"}}</td>
+				<td>{{astr.hdebut | date : 'hh:mm:00'}}</td>
+				<td>{{astr.hfin | date:"hh:mm:00"}}</td>
+
+				<td>{{astr.k}}</td>
+				<td>{{astr.charge | number:2}}</td>
+				<td><a href ng-click="remove(astr)">Remover</a></td>
+			</tr>
+			<tr>
+			<td colspan="8">Charge Totale</td>
+			<td>{{calculate(listAstreinte)  | number:2}}</td>
+			<td>%</td>
+			</tr>
+		</table>
+	</fieldset>
+	<a href="/#/astreinte">Astreinte</a>
+	<a href="/#/ticket">Ticket</a>
+</body>
+</html>

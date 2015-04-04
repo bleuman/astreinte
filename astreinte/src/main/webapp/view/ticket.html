@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<body>
+	<form prenom="ticketform">
+		<table>
+			<tr>
+
+				<td><label>QC *</label></td>
+				<td><input type="text" ng-model="ticket.qc" /></td>
+				<td><label>Libelle *</label></td>
+				<td><input type="text" ng-model="ticket.libelle" /></td>
+			</tr>
+			<tr>
+
+				<td><label>CP *</label></td>
+				<td><select ng-model="ticket.cp.id">
+						<option ng-repeat="mgr in mangersList" value="{{mgr.id}}">{{mgr.nom}}</option>
+				</select></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+
+				<td><label>PMO *</label></td>
+				<td><select ng-model="ticket.pmo.id">
+						<option ng-repeat="mgr in mangersList" value="{{mgr.id}}">{{mgr.nom}}</option>
+				</select></td>
+				<td></td>
+				<td></td>
+			</tr>
+
+			<tr>
+
+				<td><label>FO *</label></td>
+				<td><select ng-model="ticket.fo.id">
+						<option ng-repeat="mgr in mangersList" value="{{mgr.id}}">{{mgr.nom}}</option>
+				</select></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+
+				<td><label>DIR *</label></td>
+				<td><select ng-model="ticket.dir.id">
+						<option ng-repeat="mgr in mangersList" value="{{mgr.id}}">{{mgr.nom}}</option>
+				</select></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td></td>
+
+				<td><input type="submit" value="save" ng-click="save()"
+					ng-disabled="ticketform.$invalid" /></td>
+				<td><input type="reset" value="clear" ng-click="reset()" /></td>
+				<td></td>
+			</tr>
+		</table>
+	</form>
+
+	<fieldset>
+		<table border="1">
+			<tr>
+				<td>Id</td>
+				<td>QC</td>
+				<td>Libelle</td>
+				<td>CP</td>
+				<td>PMO</td>
+
+				<td colspan="2">Action</td>
+			</tr>
+			<tr ng-repeat="astr in listTicket track by $index">
+				<td><a href ng-click="edit(astr)"> {{astr.id}} </a></td>
+				<td>{{astr.qc}}</td>
+				<td>{{astr.libelle}}</td>
+				<td>{{astr.cp.nom}}</td>
+				<td>{{astr.pmo.nom}}</td>
+				<td>
+
+					<table border="1">
+						<tr>
+							<td>Id</td>
+							<td>QC</td>
+							<td>Name</td>
+							<td>LastName</td>
+							<td>Date</td>
+							<td>Debut</td>
+							<td>Fin</td>
+							<td>K</td>
+							<td>Charge</td>
+						</tr>
+						<tr ng-repeat="astre in astr.astreintes">
+							<td>{{astre.id}}</td>
+							<td>{{astre.ticket.qc}}</td>
+							<td>{{astre.ressource.prenom}}</td>
+							<td>{{astre.ressource.nom}}</td>
+							<td>{{astre.dateastreeinte | date :"dd/MM/yyyy"}}</td>
+							<td>{{astre.hdebut | date : 'hh:mm'}}</td>
+							<td>{{astre.hfin | date:"hh:mm"}}</td>
+
+							<td>{{astre.k}}</td>
+							<td>{{astre.charge}}</td>
+						</tr>
+						<tr>
+							<td colspan="8">Charge Totale</td>
+							<td>{{calculateTotalCharge(astr.astreintes)}}</td>
+							
+						</tr>
+					</table>
+
+				</td>
+				<td><a href ng-click="remove(astr)">Remover</a></td>
+			</tr>
+		</table>
+	</fieldset>
+
+	<a href="/#/astreinte">Astreinte</a>
+	<a href="/#/ticket">Ticket</a>
+</body>
+</html>

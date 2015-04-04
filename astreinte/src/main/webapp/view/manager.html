@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<body>
+	<form prenom="managerform">
+		<table>
+			<tr>
+
+				<td><label>Nom *</label></td>
+				<td><input type="text" ng-model="manager.nom" /></td>
+				<td><label>Prenom *</label></td>
+				<td><input type="text" ng-model="manager.prenom" /></td>
+			</tr>
+			<tr>
+				<td><label>DAS *</label></td>
+				<td><input type="text" ng-model="manager.das" /></td>
+				<td><label>Role *</label></td>
+				<td><input type="text" ng-model="manager.role" /></td>
+
+			</tr>
+
+
+
+
+			<tr>
+
+				<td colspan="2"><input type="submit" value="save"
+					ng-click="save()"  /></td>
+				<td colspan="2"><input type="reset" value="clear"
+					ng-click="reset()" /></td>
+				<td></td>
+			</tr>
+		</table>
+	</form>
+
+	<fieldset>
+		<table border="1">
+			<tr>
+				<td>Id</td>
+				<td>Nom</td>
+				<td>Prenom</td>
+				<td>DAS</td>
+				<td>Role</td>
+
+				<td>Action</td>
+			</tr>
+			<tr ng-repeat="man in listManagers">
+				<td><a href ng-click="edit(man)"> {{man.id}} </a></td>
+				<td>{{man.nom}}</td>
+				<td>{{man.prenom}}</td>
+				<td>{{man.das}}</td>
+				<td>{{man.role}}</td>
+
+				<td><a href ng-click="remove(man)">Remover</a></td>
+			</tr>
+		</table>
+	</fieldset>
+	<a href="/#/astreinte">Astreinte</a>
+	<a href="/#/ticket">Ticket</a>
+	<a href="/#/manager">Ticket</a>
+</body>
+</html>
