@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.atos.si.ma.mt.astreinte.dao.AstreinteDAO;
 import net.atos.si.ma.mt.astreinte.model.Astreinte;
+import net.atos.si.ma.mt.astreinte.model.Ressource;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +36,16 @@ public class AstreinteDAOImpl extends GenericHibernateDAO<Astreinte> implements
 								+ ":hfin BETWEEN hdebut and hfin )")
 				.setTime("hdebut", astreinte.getHdebut())
 				.setTime("hfin", astreinte.getHfin()).list();
+		return list;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	@Transactional
+	public List<Astreinte> getByRessource(Ressource ressource) {
+		List<Astreinte> list = getCurrentSession()
+				.createQuery("from Astreinte where ressource.id=:res")
+				.setLong("res", ressource.getId()).list();
 		return list;
 	}
 

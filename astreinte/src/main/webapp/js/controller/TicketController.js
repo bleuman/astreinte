@@ -1,32 +1,37 @@
-var TicketController = function($scope, $http,$log, TicketService) {
+var TicketController = function($scope, $http, $log, TicketService) {
 
-	// $scope.dateTicket=null;
+	$scope.recherche = "";
 	$scope.ticket = new TicketService();
-
-	// calling restful service
 	$scope.listTicket = TicketService.list();
-	// $scope.mangersList = ManagerService.list();
+	$scope.resultats = {};
 
-	$http.get('rest/manager/').success(function(data){$scope.mangersList =data;});
-	// $http.get('rest/ticket/').success(function(data){$scope.listeTickets
-	// =data;});
+	$http.get('rest/manager/').success(function(data) {
+		$scope.mangersList = data;
+	});
 
 	$scope.reset = function() {
 		$scope.ticket = new TicketService();
 	};
 
-	// save or update
+	$scope.rechercherTicket = function(mquery) {
+		$http.post('rest/ticket/recherche/', {
+			query : mquery
+		}).success(function(data) {
+			$scope.resultats = data;
+		});
+
+	};
+
 	$scope.save = function() {
 
 		if ($scope.ticket.id > 0) {
 			$scope.update();
 		} else {
 
-			// $scope.ticket.hfin="01 01 1900 "+$scope.ticket.hfin +":00 000";
 			$scope.ticket.$create(function() {
-				// depois que salvamos atualizamos a lista
 				$scope.listTicket = TicketService.list();
-				// $scope.reset();
+				$scope.rechercherTicket($scope.ticket.qc);
+				$scope.reset();
 			});
 		}
 	};
@@ -49,9 +54,8 @@ var TicketController = function($scope, $http,$log, TicketService) {
 			$scope.listTicket = TicketService.list();
 		});
 	};
-	
 
-	$scope.calculateTotalCharge = function(listastrinte) {
+	$scope.calculate = function(listastrinte) {
 		var tmp = 0;
 		for (var i = 0, size = listastrinte.length; i < size; i++) {
 			var item = listastrinte[i];
@@ -61,5 +65,5 @@ var TicketController = function($scope, $http,$log, TicketService) {
 	};
 
 };
-// isso aqui pe dependency injection
+
 TicketController.$inject = [ '$scope', '$http', '$log', 'TicketService' ];

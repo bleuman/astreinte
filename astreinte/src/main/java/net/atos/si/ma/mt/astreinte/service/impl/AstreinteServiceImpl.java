@@ -7,7 +7,7 @@ import net.atos.si.ma.mt.astreinte.dao.AstreinteDAO;
 import net.atos.si.ma.mt.astreinte.dao.JourFerierDAO;
 import net.atos.si.ma.mt.astreinte.dao.TicketDAO;
 import net.atos.si.ma.mt.astreinte.model.Astreinte;
-import net.atos.si.ma.mt.astreinte.model.Ticket;
+import net.atos.si.ma.mt.astreinte.model.Ressource;
 import net.atos.si.ma.mt.astreinte.model.TypeAstreinte;
 import net.atos.si.ma.mt.astreinte.service.AstreinteService;
 
@@ -52,9 +52,6 @@ public class AstreinteServiceImpl extends
 
 	@Override
 	public void save(Astreinte astreinte) {
-		long idTicket = astreinte.getIdQC();
-		Ticket ticket= ticketDAO.find(idTicket);
-		ticket.getAstreintes().add(astreinte);
 		super.save(astreinte);
 	}
 
@@ -95,6 +92,12 @@ public class AstreinteServiceImpl extends
 
 	public List<Astreinte> checkChevechment(Astreinte astreinte) {
 		return getDao().checkChevechment(astreinte);
+	}
+
+	@Override
+	public List<Astreinte> getByRessource(Ressource ressource) {
+		// TODO Auto-generated method stub
+		return getDao().getByRessource(ressource);
 	}
 
 }

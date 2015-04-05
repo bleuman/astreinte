@@ -13,6 +13,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import net.atos.si.ma.mt.astreinte.model.Astreinte;
+import net.atos.si.ma.mt.astreinte.model.Ressource;
 import net.atos.si.ma.mt.astreinte.service.AstreinteService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,6 +69,14 @@ public class AstreinteController {
 	@Path("findcritere")
 	public List<Astreinte> listByCritere(Astreinte astreinte) {
 		return astreinteService.checkChevechment(astreinte);
+	}
+	
+	
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("byressource")
+	public List<Astreinte> getByRessource(Ressource ressource) {
+		return astreinteService.getByRessource(ressource);
 	}
 
 	public AstreinteService getAstreinteService() {

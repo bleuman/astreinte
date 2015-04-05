@@ -1,7 +1,6 @@
 package net.atos.si.ma.mt.astreinte.web.controller;
 
 import java.util.List;
-import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -13,7 +12,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import net.atos.si.ma.mt.astreinte.model.Astreinte;
+import net.atos.si.ma.mt.astreinte.model.RechercheObject;
 import net.atos.si.ma.mt.astreinte.model.Ticket;
 import net.atos.si.ma.mt.astreinte.service.AstreinteService;
 import net.atos.si.ma.mt.astreinte.service.TicketService;
@@ -57,14 +56,16 @@ public class TicketController {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Ticket> listAll() {
-		List<Ticket> tickets=ticketService.listAll();
-		for (Ticket ticket : tickets) {
-			Set<Astreinte> astreintes = ticket.getAstreintes();
-			for (Astreinte astreinte : astreintes) {
-				astreinteService.process(astreinte);
-			}
-			
-		}
+		List<Ticket> tickets = ticketService.listAll();
+		return tickets;
+
+	}
+	
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/recherche/")
+	public List<Ticket> rechercheQC(RechercheObject  qc) {
+		List<Ticket> tickets = ticketService.recherche(qc.query);
 		return tickets;
 
 	}

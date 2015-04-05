@@ -44,6 +44,9 @@ public class Astreinte {
 
 	@ManyToOne
 	private TypeAstreinte typeAstreinte;
+	
+	@ManyToOne
+	private Ticket ticket;
 
 	@Transient
 	private Float k = Float.valueOf(-1f);
@@ -51,16 +54,7 @@ public class Astreinte {
 	@Transient
 	private Float charge;
 
-	@Transient
-	private long idQC;
-
-	public long getIdQC() {
-		return idQC;
-	}
-
-	public void setIdQC(long idQC) {
-		this.idQC = idQC;
-	}
+	
 
 	public long getId() {
 		return id;
@@ -118,6 +112,14 @@ public class Astreinte {
 
 	public void setTypeAstreinte(TypeAstreinte typeAstreinte) {
 		this.typeAstreinte = typeAstreinte;
+	}
+	
+	public Ticket getTicket() {
+		return ticket;
+	}
+
+	public void setTicket(Ticket ticket) {
+		this.ticket = ticket;
 	}
 
 	public Float getK() {

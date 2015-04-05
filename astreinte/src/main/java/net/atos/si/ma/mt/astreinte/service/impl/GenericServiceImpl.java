@@ -42,8 +42,8 @@ public class GenericServiceImpl<T, DAO extends GenericDAO<T>> implements
 		return list;
 	}
 
-	public List<T> listByCriteres(String query, Map<String, Object> params) {
-		List<T> list = dao.listByCriteres(query, params);
+	public List<T> listByCriteres(String query, String[] keys, Object[] values) {
+		List<T> list = dao.listByCriteres(query, keys,values);
 		return list;
 	}
 

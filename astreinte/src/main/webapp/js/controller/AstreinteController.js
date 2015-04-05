@@ -1,12 +1,6 @@
 var AstreinteController = function($http, $scope, $log, AstreinteService) {
 
-	// $scope.dateAstreinte=null;
-	// $scope.astreinte = new AstreinteService();
-	// $scope.astreinte.hdebut="00:00";
-	// $scope.astreinte.hfin="23:59";
-
-	// calling restful service
-	$scope.listAstreinte = AstreinteService.list();
+	$scope.listAstreinte = $scope.byressource();
 
 	$http.get('rest/ressource/').success(function(data) {
 		$scope.listeRessources = data;
@@ -22,36 +16,47 @@ var AstreinteController = function($http, $scope, $log, AstreinteService) {
 		$scope.astreinte = new AstreinteService();
 		$scope.astreinte.hdebut = "00:00:00";
 		$scope.astreinte.hfin = "23:59:00";
-		var today=new Date();
+		var today = new Date();
 		var offsetday = "";
 		var offsetmon = "";
-		if(today.getDate()<10)
-			offsetday="0";
-		if(today.getMonth()<10)
-			offsetmon="0";
-		$scope.astreinte.dateAstreinte = today.getFullYear()+"-"+offsetmon+today.getMonth()+"-"+offsetday+today.getDate();
+		if (today.getDate() < 10)
+			offsetday = "0";
+		if (today.getMonth() < 10)
+			offsetmon = "0";
+		var m = today.getMonth() + 1;
+		$scope.astreinte.dateAstreinte = today.getFullYear() + "-" + offsetmon
+				+ m + "-" + offsetday + today.getDate();
 	};
 	
+	$scope.byressource=function(){
+		var res=null;
+		if(!!AstreinteService.ressource.id){
+			$http.get('rest/byressource/',{id:AstreinteService.ressource.id}).success(function(data) {
+				res = data;
+			});
+			return res;
+		}
+			
+			
+		else
+			return AstreinteService.list();
+	};
+
 	// save or update
 	$scope.save = function() {
 		if ($scope.astreinte.id > 0) {
 			$scope.update();
 		} else {
-
-			// $scope.astreinte.hfin="01 01 1900 "+$scope.astreinte.hfin +":00
-			// 000";
 			$scope.astreinte.$create(function() {
-				// depois que salvamos atualizamos a lista
-				$scope.listAstreinte = AstreinteService.list();
-				$scope.total = $scope.calculate();
-				// $scope.reset();
+				$scope.listAstreinte = $scope.byressource();
+				$scope.reset();
 			});
 		}
 	};
 
 	$scope.update = function() {
 		$scope.astreinte.$update(function() {
-			$scope.listAstreinte = AstreinteService.list();
+			$scope.listAstreinte =  $scope.byressource();
 			$scope.total = $scope.calculate();
 			$scope.reset();
 		});
@@ -65,21 +70,10 @@ var AstreinteController = function($http, $scope, $log, AstreinteService) {
 		astreinte.$remove({
 			id : astreinte.id
 		}, function(res) {
-			$scope.listAstreinte = AstreinteService.list();
-			$scope.total = $scope.calculate();
+			$scope.listAstreinte = $scope.byressource();
 		});
 	};
-//	$scope.formatDate = function(val) {
-//		if (val != null) {
-//			if (val.length == 5)
-//				return "1900-01-01T" + val + ":00.000+0000";
-//			if (val.length == 8)
-//				return "1900-01-01T" + val + ".000+0000";
-//		} else {
-//			return val;
-//		}
-//		return val;
-//	};
+	
 
 	$scope.calculate = function(alist) {
 		var tmp = 0;
@@ -90,10 +84,8 @@ var AstreinteController = function($http, $scope, $log, AstreinteService) {
 		return tmp;
 	};
 
-	
 	$scope.reset();
 
 };
 
-// isso aqui pe dependency injection
 AstreinteController.$inject = [ '$http', '$scope', '$log', 'AstreinteService' ];

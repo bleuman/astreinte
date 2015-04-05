@@ -2,9 +2,6 @@ package net.atos.si.ma.mt.astreinte.dao.impl;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import net.atos.si.ma.mt.astreinte.dao.GenericDAO;
 
@@ -14,9 +11,11 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 @SuppressWarnings("unchecked")
+@Transactional
 public abstract class GenericHibernateDAO<T> implements GenericDAO<T> {
 
 	/*
@@ -47,26 +46,28 @@ public abstract class GenericHibernateDAO<T> implements GenericDAO<T> {
 		return criteria.list();
 	}
 
-	public List<T> listByCriteres(String query, Map<String, Object> params) {
+	public List<T> listByCriteres(String query, String[] keys, Object[] values) {
+
 		Query hquery = getCurrentSession().createQuery(query);
-		Set<Entry<String, Object>> listParams = params.entrySet();
-		for (Object object : listParams) {
-			if (object instanceof String) {
-				String rawkey = (String) object;
+		if (keys != null && values != null && keys.length == values.length) {
+			int count = keys.length;
+			for (int i = 0; i < count; i++) {
+				Object value = values[i];
+				String rawkey = keys[i];
 				String key = rawkey.substring(rawkey.indexOf(':') + 1,
 						rawkey.length());
 				String parmaName = rawkey.substring(rawkey.indexOf(':'));
 				switch (key) {
 				case "string":
-					hquery.setString(parmaName, (String) params.get(rawkey));
+					hquery.setString(parmaName, (String) value);
 					break;
 
 				case "date":
-					hquery.setDate(parmaName, (Date) params.get(rawkey));
+					hquery.setDate(parmaName, (Date) value);
 					break;
-					
+
 				case "time":
-					hquery.setTime(parmaName, (Date) params.get(rawkey));
+					hquery.setTime(parmaName, (Date) value);
 					break;
 
 				default:
@@ -74,7 +75,6 @@ public abstract class GenericHibernateDAO<T> implements GenericDAO<T> {
 				}
 			}
 		}
-
 		return (List<T>) hquery.list();
 	}
 

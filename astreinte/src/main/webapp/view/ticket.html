@@ -1,130 +1,100 @@
 <!DOCTYPE html>
 <html>
 <body>
-	<form prenom="ticketform">
-		<table>
-			<tr>
+	<div class="page-header">
+		<h1>Gestion Tickets</h1>
+		<div class="btn-group">
 
-				<td><label>QC *</label></td>
-				<td><input type="text" ng-model="ticket.qc" /></td>
-				<td><label>Libelle *</label></td>
-				<td><input type="text" ng-model="ticket.libelle" /></td>
-			</tr>
-			<tr>
+			<div class="btn-group">
+				<button type="button" class="btn btn-primary dropdown-toggle"
+					data-toggle="dropdown">
+					Menu <span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu" role="menu">
 
-				<td><label>CP *</label></td>
-				<td><select ng-model="ticket.cp.id">
-						<option ng-repeat="mgr in mangersList" value="{{mgr.id}}">{{mgr.nom}}</option>
-				</select></td>
-				<td></td>
-				<td></td>
-			</tr>
-			<tr>
 
-				<td><label>PMO *</label></td>
-				<td><select ng-model="ticket.pmo.id">
-						<option ng-repeat="mgr in mangersList" value="{{mgr.id}}">{{mgr.nom}}</option>
-				</select></td>
-				<td></td>
-				<td></td>
-			</tr>
+					<li><a href="/#/astreinte">Astreinte</a></li>
+					<li><a href="/#/ticket">Ticket</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div class="jumbotron">
+	<div class="row">
+		<div class="col-lg-4">
+			<div class="input-group">
+				<span class="input-group-btn">
+					<button class="btn btn-default"
+						ng-click="rechercherTicket(recherche)" type="button">Recherche</button>
+				</span> <input type="text" ng-model="recherche" class="form-control"
+					placeholder="Search for...">
+			</div>
+			<!-- /input-group -->
+		</div>
+</div>
+	</div>
+	<!-- /.row -->
 
-			<tr>
+	<div class="jumbotron" ng-show='resultats.length > 0'>
 
-				<td><label>FO *</label></td>
-				<td><select ng-model="ticket.fo.id">
-						<option ng-repeat="mgr in mangersList" value="{{mgr.id}}">{{mgr.nom}}</option>
-				</select></td>
-				<td></td>
-				<td></td>
-			</tr>
-			<tr>
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>Id</th>
+					<th>QC</th>
+					<th>Libelle</th>
+					<th>CP</th>
+					<th>PMO</th>
 
-				<td><label>DIR *</label></td>
-				<td><select ng-model="ticket.dir.id">
-						<option ng-repeat="mgr in mangersList" value="{{mgr.id}}">{{mgr.nom}}</option>
-				</select></td>
-				<td></td>
-				<td></td>
-			</tr>
-			<tr>
-				<td></td>
-				<td></td>
-
-				<td><input type="submit" value="save" ng-click="save()"
-					ng-disabled="ticketform.$invalid" /></td>
-				<td><input type="reset" value="clear" ng-click="reset()" /></td>
-				<td></td>
-			</tr>
-		</table>
-	</form>
-
-	<fieldset>
-		<table border="1">
-			<tr>
-				<td>Id</td>
-				<td>QC</td>
-				<td>Libelle</td>
-				<td>CP</td>
-				<td>PMO</td>
-
-				<td colspan="2">Action</td>
-			</tr>
-			<tr ng-repeat="astr in listTicket track by $index">
+					<th colspan="2">Action</th>
+				</tr>
+			</thead>
+			<tr ng-repeat="astr in resultats">
 				<td><a href ng-click="edit(astr)"> {{astr.id}} </a></td>
 				<td>{{astr.qc}}</td>
 				<td>{{astr.libelle}}</td>
 				<td>{{astr.cp.nom}}</td>
 				<td>{{astr.pmo.nom}}</td>
-				<td>
-
-					<div class="jumbotron">
-	
-		<table class="table table-striped" >
-		<thead>
-			<tr>
-				<th>Id</th>
-				<th>QC</th>
-				<th>Name</th>
-				<th>LastName</th>
-				<th>Date</th>
-				<th>Debut</th>
-				<th>Fin</th>
-				<th>K</th>
-				<th>Charge</th>
-				<th>Action</th>
-			</tr>
-			</thead>
-			<tr ng-repeat="astre in astr.atreintes track by $index">
-				<td><a href ng-click="edit(astr)"> {{astr.id}} </a></td>
-				<td>{{listeTickets[astre.idQC].qc}}</td>
-				<td>{{astre.ressource.prenom}}</td>
-				<td>{{astre.ressource.nom}}</td>
-				<td>{{astre.dateAstreinte | date :"dd/MM/yyyy"}}</td>
-				<td>{{astre.hdebut | date : 'hh:mm:00'}}</td>
-				<td>{{astre.hfin | date:"hh:mm:00"}}</td>
-
-				<td>{{astre.k}}</td>
-				<td>{{astre.charge | number:2}}</td>
-				<td><a href ng-click="remove(astr)">Remover</a></td>
-			</tr>
-			<tfoot>
-			<tr>
-			<th colspan="8">Charge Totale</th>
-			<th>{{calculate(astr.listAstreinte)  | number:2}}</th>
-			<th>JH</th>
-			</tr>
-			</tfoot>
-		</table>
-</div>
-
-				</td>
+				<td></td>
 				<td><a href ng-click="remove(astr)">Remover</a></td>
 			</tr>
 		</table>
-	</fieldset>
+	</div>
+	<div class="jumbotron">
 
-	<a href="/#/astreinte">Astreinte</a>
-	<a href="/#/ticket">Ticket</a>
+		<form class="form-horizontal" name="ticketform" role="form">
+
+			<div class="form-group">
+				<label class="label label-primary" for="qc">QC</label> <input name="qc" type="text"
+					ng-model="ticket.qc" />
+			
+				<label class="label label-primary" for="libelle">Libelle</label><input name="libelle"
+					type="text" ng-model="ticket.libelle" />
+			</div>
+			<div class="form-group">
+				<label class="label label-primary" for="libelle">CP</label> <select name="cp"
+					ng-model="ticket.cp.id">
+					<option ng-repeat="mgr in mangersList" value="{{mgr.id}}">{{mgr.nom}}</option>
+				</select> <label class="label label-primary" for="pmo">PMO</label> <select name="pmo"
+					ng-model="ticket.pmo.id">
+					<option ng-repeat="mgr in mangersList" value="{{mgr.id}}">{{mgr.nom}}</option>
+				</select> <label class="label label-primary" for="pmo">FO</label> <select name="fo"
+					ng-model="ticket.fo.id">
+					<option ng-repeat="mgr in mangersList" value="{{mgr.id}}">{{mgr.nom}}</option>
+				</select> <label class="label label-primary" for="pmo">dir</label> <select name="dir"
+					ng-model="ticket.dir.id">
+					<option ng-repeat="mgr in mangersList" value="{{mgr.id}}">{{mgr.nom}}</option>
+				</select>
+			</div>
+
+			<div class="form-group">
+				<input type="submit" class="btn btn-success btn-lg" value="save"
+					ng-click="save()" ng-disabled="ticketform.$invalid" /> <input
+					type="reset" class="btn btn-info btn-lg" value="clear"
+					ng-click="reset()" />
+			</div>
+		</form>
+	</div>
+
 </body>
 </html>
