@@ -11,6 +11,6 @@ public interface AstreinteDAO extends GenericDAO<Astreinte> {
 
 	List<Astreinte> checkChevechment(Astreinte astreinte);
 
-	List<Astreinte> getByRessource(Ressource ressource);
+	List<Astreinte> getByRessource(long idressource,long idqc);
 
 }

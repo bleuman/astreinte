@@ -20,34 +20,76 @@
 			</div>
 		</div>
 	</div>
+	<button class="btn btn-default" ng-click="checkChevechment()"
+		type="button">Ckeck</button>
+	<div class="jumbotron" ng-show="checkChevechmentList.length > 0">
 
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>Id</th>
+					<th>QC</th>
+					<th>Name</th>
+					<th>LastName</th>
+					<th>Date</th>
+					<th>Debut</th>
+					<th>Fin</th>
+					<th>K</th>
+					<th>Charge</th>
+					<th>Action</th>
+				</tr>
+			</thead>
+			<tr ng-repeat="castr in checkChevechmentList">
+				<td><a href ng-click="edit(castr)"> {{castr.id}} </a></td>
+				<td>{{castr.ticket.qc}}</td>
+				<td>{{castr.ressource.prenom}}</td>
+				<td>{{castr.ressource.nom}}</td>
+				<td>{{castr.dateAstreinte | date :"dd/MM/yyyy"}}</td>
+				<td>{{castr.hdebut | date : 'hh:mm:ss'}}</td>
+				<td>{{castr.hfin | date:"hh:mm:ss"}}</td>
+
+				<td>{{castr.k}}</td>
+				<td>{{castr.charge | number:2}}</td>
+				<td><a href ng-click="remove(castr)">Remover</a></td>
+			</tr>
+			<tfoot>
+				<tr>
+					<th colspan="8">Charge Totale</th>
+					<th>{{calculate(listAstreinte) | number:2}}</th>
+					<th>JH</th>
+				</tr>
+			</tfoot>
+		</table>
+	</div>
 
 	<div class="jumbotron">
 
 		<form class="form-inline" name="astreinteform" role="form">
 
 			<div class="form-group">
-				<label class="label label-primary" for="idQC">QC</label> <select class="form-control" id="idQC"
-					ng-model="astreinte.ticket.id"
+				<label class="label label-primary" for="idQC">QC</label> <select
+					class="form-control" id="idQC" ng-model="astreinte.ticket.id"
+					ng-change="byressource()"
 					ng-options="tck.id as tck.qc for tck in listeTickets"></select> <label
 					for="ressource">Ressource</label> <select class="form-control"
-					ng-model="astreinte.ressource.id"
+					ng-model="astreinte.ressource.id" ng-change="byressource()"
 					ng-options="res.id as res.nom group by res.role for res in listeRessources"></select>
 
-				<label class="label label-primary" for="typeAstreinte">Type astreinte</label> <select
-					class="form-control" id="typeAstreinte"
+				<label class="label label-primary" for="typeAstreinte">Type
+					astreinte</label> <select class="form-control" id="typeAstreinte"
 					ng-model="astreinte.typeAstreinte.id"
 					ng-options="tp.id as tp.libelle for tp in typesAstreinteList"></select>
 			</div>
 
 			<div class="form-group">
-				<label class="label label-primary" for="adate">Date</label> <input class="form-control"
-					id="adate" type="date" ng-model="astreinte.dateAstreinte"
-					ng-required="true" /> <label class="label label-primary" for="hdebut">Debut</label> <input
+				<label class="label label-primary" for="adate">Date</label> <input
+					class="form-control" id="adate" type="date"
+					ng-model="astreinte.dateAstreinte" ng-required="true" /> <label
+					class="label label-primary" for="hdebut">Debut</label> <input
 					class="form-control" id="hdebut" type="time"
-					ng-model="astreinte.hdebut" /> <label class="label label-primary" for="hfin">Fin</label> <input
-					class="form-control" id="hfin" type="time"
-					ng-model="astreinte.hfin" />
+					ng-model="astreinte.hdebut" /> <label class="label label-primary"
+					for="hfin">Fin</label> <input class="form-control" id="hfin"
+					type="time" ng-model="astreinte.hfin" />
 			</div>
 
 			<div class="form-group">

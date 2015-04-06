@@ -7,5 +7,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class RechercheObject {
 	@XmlElement
 	public String query;
+	@XmlElement
+	public long idressource;
+	@XmlElement
+	public long idqc;
 
 }

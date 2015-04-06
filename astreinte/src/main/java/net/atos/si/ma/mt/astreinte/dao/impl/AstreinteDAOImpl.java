@@ -6,6 +6,7 @@ import net.atos.si.ma.mt.astreinte.dao.AstreinteDAO;
 import net.atos.si.ma.mt.astreinte.model.Astreinte;
 import net.atos.si.ma.mt.astreinte.model.Ressource;
 
+import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,11 +30,12 @@ public class AstreinteDAOImpl extends GenericHibernateDAO<Astreinte> implements
 		@SuppressWarnings("unchecked")
 		List<Astreinte> list = getCurrentSession()
 				.createQuery(
-						"select * from astreinte where dateastreinte='2015-03-03' and "
-								+ "( hdebut BETWEEN :hdebut and '12:00:00' or"
+						"from Astreinte where dateAstreinte=:dateAstreinte and "
+								+ "( hdebut BETWEEN :hdebut and :hfin or"
 								+ " hfin BETWEEN :hdebut and :hfin  or "
 								+ ":hdebut BETWEEN hdebut and hfin or "
 								+ ":hfin BETWEEN hdebut and hfin )")
+				.setDate("dateAstreinte", astreinte.getDateAstreinte())
 				.setTime("hdebut", astreinte.getHdebut())
 				.setTime("hfin", astreinte.getHfin()).list();
 		return list;
@@ -42,11 +44,22 @@ public class AstreinteDAOImpl extends GenericHibernateDAO<Astreinte> implements
 	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional
-	public List<Astreinte> getByRessource(Ressource ressource) {
-		List<Astreinte> list = getCurrentSession()
-				.createQuery("from Astreinte where ressource.id=:res")
-				.setLong("res", ressource.getId()).list();
-		return list;
-	}
+	public List<Astreinte> getByRessource(long idressource, long idqc) {
+		String squery = "from Astreinte where 1=1 ";
+		if (idqc >= 0) {
+			squery = squery + " and ticket.id=:idqc";
+		}
+		if (idressource >= 0) {
+			squery = squery + " and ressource.id=:idressource";
+		}
+		Query query = getCurrentSession().createQuery(squery);
+		if (idqc >= 0) {
+			query.setLong("idqc", idqc);
+		}
+		if (idressource >= 0) {
+			query.setLong("idressource", idressource);
+		}
 
+		return query.list();
+	}
 }

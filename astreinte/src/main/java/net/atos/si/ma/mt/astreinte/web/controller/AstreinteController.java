@@ -13,6 +13,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import net.atos.si.ma.mt.astreinte.model.Astreinte;
+import net.atos.si.ma.mt.astreinte.model.RechercheObject;
 import net.atos.si.ma.mt.astreinte.model.Ressource;
 import net.atos.si.ma.mt.astreinte.service.AstreinteService;
 
@@ -56,27 +57,27 @@ public class AstreinteController {
 		return list;
 
 	}
-	
-	@GET
+
+	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("check")
+	@Path("/check/")
 	public List<Astreinte> checkChevechment(Astreinte astreinte) {
 		return astreinteService.checkChevechment(astreinte);
 	}
-	
+
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("findcritere")
 	public List<Astreinte> listByCritere(Astreinte astreinte) {
 		return astreinteService.checkChevechment(astreinte);
 	}
-	
-	
-	@GET
+
+	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("byressource")
-	public List<Astreinte> getByRessource(Ressource ressource) {
-		return astreinteService.getByRessource(ressource);
+	@Path("/byressource/")
+	public List<Astreinte> getByRessource(RechercheObject rechercheObject) {
+		return astreinteService.getByRessource(rechercheObject.idressource,
+				rechercheObject.idqc);
 	}
 
 	public AstreinteService getAstreinteService() {

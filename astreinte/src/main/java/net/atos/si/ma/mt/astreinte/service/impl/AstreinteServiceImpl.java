@@ -95,9 +95,9 @@ public class AstreinteServiceImpl extends
 	}
 
 	@Override
-	public List<Astreinte> getByRessource(Ressource ressource) {
+	public List<Astreinte> getByRessource(long idressource,long idqc) {
 		// TODO Auto-generated method stub
-		return getDao().getByRessource(ressource);
+		return getDao().getByRessource(idressource,idqc);
 	}
 
 }

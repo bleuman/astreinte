@@ -1,6 +1,32 @@
 var AstreinteController = function($http, $scope, $log, AstreinteService) {
 
-	$scope.listAstreinte = $scope.byressource();
+	$scope.byressource = function() {
+		idqc = -1;
+		idressource = -1;
+		if (!!$scope.astreinte && !!$scope.astreinte.ressource
+				&& !!$scope.astreinte.ressource.id) {
+			idressource = $scope.astreinte.ressource.id;
+		}
+		if (!!$scope.astreinte && !!$scope.astreinte.ticket
+				&& !!$scope.astreinte.ticket.id) {
+			idqc = $scope.astreinte.ticket.id;
+		}
+		$http.post('rest/astreinte/byressource/', {
+			idressource : idressource,
+			idqc : idqc
+		}).success(function(data) {
+			$scope.listAstreinte = data;
+		});
+	};
+
+	$scope.checkChevechmentList = [];
+	$scope.checkChevechment = function() {
+		$http.post('rest/astreinte/check/', $scope.astreinte).success(function(data) {
+			$scope.checkChevechmentList = data;
+		});
+	}
+
+	$scope.byressource();
 
 	$http.get('rest/ressource/').success(function(data) {
 		$scope.listeRessources = data;
@@ -26,20 +52,7 @@ var AstreinteController = function($http, $scope, $log, AstreinteService) {
 		var m = today.getMonth() + 1;
 		$scope.astreinte.dateAstreinte = today.getFullYear() + "-" + offsetmon
 				+ m + "-" + offsetday + today.getDate();
-	};
-	
-	$scope.byressource=function(){
-		var res=null;
-		if(!!AstreinteService.ressource.id){
-			$http.get('rest/byressource/',{id:AstreinteService.ressource.id}).success(function(data) {
-				res = data;
-			});
-			return res;
-		}
-			
-			
-		else
-			return AstreinteService.list();
+		$scope.byressource();
 	};
 
 	// save or update
@@ -48,7 +61,7 @@ var AstreinteController = function($http, $scope, $log, AstreinteService) {
 			$scope.update();
 		} else {
 			$scope.astreinte.$create(function() {
-				$scope.listAstreinte = $scope.byressource();
+				$scope.byressource();
 				$scope.reset();
 			});
 		}
@@ -56,8 +69,7 @@ var AstreinteController = function($http, $scope, $log, AstreinteService) {
 
 	$scope.update = function() {
 		$scope.astreinte.$update(function() {
-			$scope.listAstreinte =  $scope.byressource();
-			$scope.total = $scope.calculate();
+			$scope.byressource();
 			$scope.reset();
 		});
 	};
@@ -70,18 +82,21 @@ var AstreinteController = function($http, $scope, $log, AstreinteService) {
 		astreinte.$remove({
 			id : astreinte.id
 		}, function(res) {
-			$scope.listAstreinte = $scope.byressource();
+			$scope.byressource();
 		});
 	};
-	
 
 	$scope.calculate = function(alist) {
-		var tmp = 0;
-		for (var i = 0, size = alist.length; i < size; i++) {
-			var item = alist[i];
-			tmp += item.charge;
+		if (!!alist && !!alist.length) {
+			var tmp = 0;
+			for (var i = 0, size = alist.length; i < size; i++) {
+				var item = alist[i];
+				tmp += item.charge;
+			}
+			return tmp;
+		} else {
+			return -1;
 		}
-		return tmp;
 	};
 
 	$scope.reset();
