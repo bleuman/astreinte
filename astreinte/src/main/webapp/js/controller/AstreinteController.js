@@ -126,12 +126,17 @@ var AstreinteController = function($http, $scope, $log, $rootScope,
 		window.sessionStorage.removeItem('token');
 		window.location = "/";
 	};
-	$scope.authentecated=false;
+	$scope.authentecated = false;
 	$scope.isauth = function() {
 		$http.get('rest/ressource/isauth/').success(function(data) {
 			$scope.authentecated = data;
-		});		;
-		
+		});
+
+		if (!$scope.authentecated) {
+			window.sessionStorage.removeItem('token');
+			window.location = "/";
+		}
+
 	};
 
 	// isauth
