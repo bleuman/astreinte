@@ -1,26 +1,33 @@
-var LoginController = function($location,$rootScope,$scope, $http, $log) {
+var LoginController=function($scope, $rootScope,
+		AuthService) {
+	$rootScope.token = window.sessionStorage.getItem('token');
+	$scope.signin = function() {
+		var formData = {
+			login : $scope.email,
+			password : $scope.password
+		};
 
-	$scope.ressource = [];
-	$scope.ressource.login = "test";
-	$scope.ressource.password = "test";
-	$rootScope.connected = false;
-	$scope.checklogin = function(ologin, opassword) {
-
-		// Simple POST request example (passing data) :
-		$http.post('/rest/ressource/checklogin', {
-			'login' : ologin,
-			'password' : opassword
-		}).success(function(data, status, headers, config) {
-			$rootScope.connected = data;
-			
-			
-				
-		}).error(function(data, status, headers, config) {
-			$rootScope.connected = false;
-			$location.url("manager");
+		AuthService.signin(formData, function(res) {
+			if (res.statut == false) {
+				alert(res.motif);
+			} else {
+				window.sessionStorage.setItem('token', res.token);
+				window.location = "/#/astreinte";
+			}
+		}, function() {
+			$rootScope.error = 'Failed to signin';
 		});
 	};
 
+	$scope.logout = function() {
+		AuthService.logout(function() {
+			window.location = "/";
+		}, function() {
+			alert("Failed to logout!");
+		});
+
+	};
+
 };
-// isso aqui pe dependency injection
-ManagerController.$inject = [ '$location','$rootScope','$scope', '$http', '$log' ];
+
+LoginController.$inject = [ '$scope', '$rootScope', 'AuthService' ];

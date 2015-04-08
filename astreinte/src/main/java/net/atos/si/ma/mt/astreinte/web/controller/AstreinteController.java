@@ -23,6 +23,7 @@ import org.springframework.stereotype.Controller;
 
 @Controller
 @Path("/astreinte")
+
 public class AstreinteController {
 
 	@Autowired

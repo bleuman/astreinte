@@ -2,7 +2,8 @@
 <html>
 
 <body>
-	<div class="page-header">
+
+	<div class="page-header" data-ng-show="!!token">
 		<h1>Gestion Astreinte {{astreinte.id}}</h1>
 		<div class="btn-group">
 
@@ -18,51 +19,81 @@
 					<li><a href="/#/ticket">Ticket</a></li>
 				</ul>
 			</div>
+			<div class="btn-group">
+				<button type="button" class="btn btn-primary" ng-click="logout()">Logout</button>
+			</div>
 		</div>
 	</div>
-	<button class="btn btn-default" ng-click="checkChevechment()"
-		type="button">Ckeck</button>
-	<div class="jumbotron" ng-show="checkChevechmentList.length > 0">
 
-		<table class="table table-striped">
-			<thead>
-				<tr>
-					<th>Id</th>
-					<th>QC</th>
-					<th>Name</th>
-					<th>LastName</th>
-					<th>Date</th>
-					<th>Debut</th>
-					<th>Fin</th>
-					<th>K</th>
-					<th>Charge</th>
-					<th>Action</th>
-				</tr>
-			</thead>
-			<tr ng-repeat="castr in checkChevechmentList">
-				<td><a href ng-click="edit(castr)"> {{castr.id}} </a></td>
-				<td>{{castr.ticket.qc}}</td>
-				<td>{{castr.ressource.prenom}}</td>
-				<td>{{castr.ressource.nom}}</td>
-				<td>{{castr.dateAstreinte | date :"dd/MM/yyyy"}}</td>
-				<td>{{castr.hdebut | date : 'hh:mm:ss'}}</td>
-				<td>{{castr.hfin | date:"hh:mm:ss"}}</td>
 
-				<td>{{castr.k}}</td>
-				<td>{{castr.charge | number:2}}</td>
-				<td><a href ng-click="remove(castr)">Remover</a></td>
-			</tr>
-			<tfoot>
-				<tr>
-					<th colspan="8">Charge Totale</th>
-					<th>{{calculate(listAstreinte) | number:2}}</th>
-					<th>JH</th>
-				</tr>
-			</tfoot>
-		</table>
+	<!-- Modal -->
+	<div class="modal fade bs-example-modal-lg" id="chevModal"
+		tabindex="-1" role="dialog" aria-labelledby="chevModalLabel"
+		aria-hidden="true">
+		<div class="modal-dialog  bs-example-modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="chevModalLabel">Chevauchement
+						entre astrintes</h4>
+				</div>
+				<div class="modal-body">
+
+					<div ng-show="checkChevechmentList.length > 0">
+
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>Id</th>
+									<th>QC</th>
+									<th>Name</th>
+									<th>LastName</th>
+									<th>Date</th>
+									<th>Debut</th>
+									<th>Fin</th>
+
+								</tr>
+							</thead>
+							<tr ng-repeat="castr in checkChevechmentList">
+								<td><a href ng-click="edit(castr)"> {{castr.id}} </a></td>
+								<td>{{castr.ticket.qc}}</td>
+								<td>{{castr.ressource.prenom}}</td>
+								<td>{{castr.ressource.nom}}</td>
+								<td>{{castr.dateAstreinte | date :"dd/MM/yyyy"}}</td>
+								<td>{{castr.hdebut | date : 'hh:mm:ss'}}</td>
+								<td>{{castr.hfin | date:"hh:mm:ss"}}</td>
+
+
+							</tr>
+							<tfoot>
+								<tr>
+									<td><a href ng-click="edit(castr)"> {{astreinte.id}} </a></td>
+									<th>{{astreinte.ticket.qc}}</th>
+									<th>{{astreinte.ressource.prenom}}</th>
+									<th>{{astreinte.ressource.nom}}</th>
+									<th>{{astreinte.dateAstreinte | date :"dd/MM/yyyy"}}</th>
+									<th>{{astreinte.hdebut | date : 'hh:mm:ss'}}</th>
+									<th>{{astreinte.hfin | date:"hh:mm:ss"}}</th>
+								</tr>
+							</tfoot>
+						</table>
+					</div>
+
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+
+				</div>
+			</div>
+		</div>
 	</div>
 
-	<div class="jumbotron">
+
+
+	<div class="jumbotron" data-ng-show="!!token">
 
 		<form class="form-inline" name="astreinteform" role="form">
 
@@ -93,16 +124,18 @@
 			</div>
 
 			<div class="form-group">
-				<input type="submit" class="btn btn-success btn-lg" value="save"
+				<button class="btn btn-warning" ng-click="checkChevechment()"
+					type="button">Ckeck</button>
+
+				<input type="submit" class="btn btn-success" value="save"
 					ng-click="save()" ng-disabled="astreinteform.$invalid" /> <input
-					type="reset" class="btn btn-info btn-lg" value="clear"
-					ng-click="reset()" />
+					type="reset" class="btn btn-info" value="clear" ng-click="reset()" />
 			</div>
 
 
 		</form>
 	</div>
-	<div class="jumbotron">
+	<div class="jumbotron" data-ng-show="!!token">
 
 		<table class="table table-striped">
 			<thead>

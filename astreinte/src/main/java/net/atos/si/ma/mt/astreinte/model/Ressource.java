@@ -22,6 +22,9 @@ public class Ressource {
 	private String password;
 	@Column(length = 150)
 	private String role;
+	
+	@Column(length = 150)
+	private String token;
 
 	public String getRole() {
 		return role;
@@ -77,6 +80,14 @@ public class Ressource {
 
 	public void setDas(String das) {
 		this.das = das;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
 	}
 
 }

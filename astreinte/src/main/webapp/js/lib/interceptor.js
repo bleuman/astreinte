@@ -3,17 +3,34 @@ var interceptor = function($rootScope, $q, $location) {
 
 	function success(response) {
 		// $log.info('$scope.connected');
-		
-		//if ($rootScope.connected != true)
-		//	$location.url("login");
-		
 
-		return response;
+		// if ($rootScope.connected != true)
+		// $location.url("login");
+
+		return {
+			'request' : function(config) {
+				config.headers = config.headers || {};
+				// alert("£££££££ "+$rootScope.token);
+				$rootScope.token = window.sessionStorage.getItem('token');
+				if (!!$rootScope.token) {
+					config.headers.Authorization = 'Bearer '
+							+ window.sessionStorage.getItem('token');
+				}
+				return config;
+			},
+			'responseError' : function(response) {
+				if (response.status === 401 || response.status === 403) {
+					$location.path('/signin');
+				}
+				return $q.reject(response);
+			}
+		};
+		;
 		// return $q.reject(response);
 	}
 
 	function error(response) {
-		
+
 		var status = response.status;
 		var config = response.config;
 		var method = config.method;

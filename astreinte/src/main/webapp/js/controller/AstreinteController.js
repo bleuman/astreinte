@@ -1,5 +1,9 @@
-var AstreinteController = function($http, $scope, $log, AstreinteService) {
-
+var AstreinteController = function($http, $scope, $log, $rootScope,
+		AstreinteService, AuthService) {
+	$rootScope.token = window.sessionStorage.getItem('token');
+	if (!$rootScope.token) {
+		window.location = "/";
+	}
 	$scope.byressource = function() {
 		idqc = -1;
 		idressource = -1;
@@ -21,10 +25,14 @@ var AstreinteController = function($http, $scope, $log, AstreinteService) {
 
 	$scope.checkChevechmentList = [];
 	$scope.checkChevechment = function() {
-		$http.post('rest/astreinte/check/', $scope.astreinte).success(function(data) {
-			$scope.checkChevechmentList = data;
-		});
-	}
+		$http.post('rest/astreinte/check/', $scope.astreinte).success(
+				function(data) {
+					$scope.checkChevechmentList = data;
+				});
+		if ($scope.checkChevechmentList.length > 0) {
+			$('#chevModal').modal('show');
+		}
+	};
 
 	$scope.byressource();
 
@@ -57,6 +65,11 @@ var AstreinteController = function($http, $scope, $log, AstreinteService) {
 
 	// save or update
 	$scope.save = function() {
+		$scope.checkChevechment();
+		if ($scope.checkChevechmentList.length > 0) {
+			return;
+		}
+
 		if ($scope.astreinte.id > 0) {
 			$scope.update();
 		} else {
@@ -68,6 +81,10 @@ var AstreinteController = function($http, $scope, $log, AstreinteService) {
 	};
 
 	$scope.update = function() {
+		$scope.checkChevechment();
+		if ($scope.checkChevechmentList.length > 0) {
+			return;
+		}
 		$scope.astreinte.$update(function() {
 			$scope.byressource();
 			$scope.reset();
@@ -98,9 +115,12 @@ var AstreinteController = function($http, $scope, $log, AstreinteService) {
 			return -1;
 		}
 	};
-
+	$scope.logout = function() {
+		AuthService.logout();
+	};
 	$scope.reset();
 
 };
 
-AstreinteController.$inject = [ '$http', '$scope', '$log', 'AstreinteService' ];
+AstreinteController.$inject = [ '$http', '$scope', '$log', '$rootScope',
+		'AstreinteService', 'AuthService' ];

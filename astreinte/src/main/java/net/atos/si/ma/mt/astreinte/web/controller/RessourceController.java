@@ -10,13 +10,15 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
+import net.atos.si.ma.mt.astreinte.model.LoginData;
 import net.atos.si.ma.mt.astreinte.model.LoginObject;
 import net.atos.si.ma.mt.astreinte.model.Ressource;
 import net.atos.si.ma.mt.astreinte.service.RessourceService;
 
-import org.apache.commons.collections.iterators.ReverseListIterator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -51,17 +53,44 @@ public class RessourceController {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Ressource> listAll() {
-
-		return ressourceService.listAll();
+	public List<Ressource> listAll(@Context HttpHeaders headers) {
+		if (ressourceService.isAuthTokenValid(headers)) {
+			return ressourceService.listAll();
+		} else
+			return null;
 
 	}
 
 	@POST
-	@Path("checklogin")
+	@Path("/authenticate/")
 	@Produces(MediaType.APPLICATION_JSON)
-	public boolean checklogin(LoginObject loginObject) {
-		return ressourceService.checklogin(loginObject.login, loginObject.password);
+	public LoginData checklogin(@Context HttpHeaders headers,
+			LoginObject loginObject) {
+		LoginData loginData = new LoginData();
+		loginData.statut = false;
+		loginData.username = loginObject.login;
+		loginData.motif = "Login/Password Incorrect";
+		String token = null;
+		token = ressourceService.login(loginObject.login, loginObject.password);
+		if (token != null) {
+
+			loginData.token = token;
+			loginData.statut = true;
+			loginData.motif = "Success";
+			return loginData;
+
+		}
+		return loginData;
+	}
+
+	@GET
+	@Path("/logout/")
+	@Produces(MediaType.APPLICATION_JSON)
+	public LoginData logout(@Context HttpHeaders headers) {
+		ressourceService.logout(headers);
+		LoginData loginData = new LoginData();
+		loginData.statut = false;
+		return loginData;
 	}
 
 	public RessourceService getRessourceService() {

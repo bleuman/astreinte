@@ -27,14 +27,17 @@ public class AstreinteDAOImpl extends GenericHibernateDAO<Astreinte> implements
 
 	@Transactional
 	public List<Astreinte> checkChevechment(Astreinte astreinte) {
+		if (astreinte.getRessource() == null)
+			return null;
 		@SuppressWarnings("unchecked")
 		List<Astreinte> list = getCurrentSession()
 				.createQuery(
-						"from Astreinte where dateAstreinte=:dateAstreinte and "
+						"from Astreinte where ressource.id=:ressourceid and dateAstreinte=:dateAstreinte and "
 								+ "( hdebut BETWEEN :hdebut and :hfin or"
 								+ " hfin BETWEEN :hdebut and :hfin  or "
 								+ ":hdebut BETWEEN hdebut and hfin or "
 								+ ":hfin BETWEEN hdebut and hfin )")
+				.setLong("ressourceid", astreinte.getRessource().getId())
 				.setDate("dateAstreinte", astreinte.getDateAstreinte())
 				.setTime("hdebut", astreinte.getHdebut())
 				.setTime("hfin", astreinte.getHfin()).list();
