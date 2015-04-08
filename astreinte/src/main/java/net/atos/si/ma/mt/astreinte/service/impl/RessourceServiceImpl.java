@@ -1,13 +1,18 @@
 package net.atos.si.ma.mt.astreinte.service.impl;
 
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
+import java.util.Set;
 
 import javax.ws.rs.core.HttpHeaders;
 
 import net.atos.si.ma.mt.astreinte.dao.RessourceDAO;
+import net.atos.si.ma.mt.astreinte.model.LoginData;
 import net.atos.si.ma.mt.astreinte.model.Ressource;
 import net.atos.si.ma.mt.astreinte.service.RessourceService;
 
@@ -15,10 +20,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import com.auth0.jwt.JWTSigner;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.JWTVerifyException;
+
 @Service
 public class RessourceServiceImpl extends
 		GenericServiceImpl<Ressource, RessourceDAO> implements RessourceService {
-	private final Map<String, String> authorizationTokensStorage = new HashMap<String, String>();
+	private final Map<String, HashMap<String, Object>> authorizationTokensStorage = new HashMap<String, HashMap<String, Object>>();
+	private static final String SECRET = "my secret";
+	private static JWTSigner signer = new JWTSigner(SECRET);
+	private static JWTVerifier verifier = new JWTVerifier(SECRET);
 
 	@Autowired
 	@Qualifier("ressourceDAOImpl")
@@ -32,26 +44,42 @@ public class RessourceServiceImpl extends
 		return objRegister;
 	}
 
-	public String login(String login, String password) {
-		if (getDao().checklogin(login, password)) {
-			String authToken = UUID.randomUUID().toString();
-			authorizationTokensStorage.put(authToken, login);
-			return authToken;
+	public LoginData login(String login, String password) {
+		LoginData loginData = new LoginData();
+		loginData.statut = false;
+		loginData.username = login;
+		loginData.motif = "Login/Password Incorrect";
+
+		Ressource ressource = getDao().checklogin(login, password);
+		if (ressource != null) {
+			// String authToken = UUID.randomUUID().toString();
+			HashMap<String, Object> claims = new HashMap<String, Object>();
+			claims.put(ressource.getId() + "", ressource.getLogin());
+			String authToken = signer.sign(claims, new JWTSigner.Options()
+					.setExpirySeconds(10).setIssuedAt(true));
+			authorizationTokensStorage.put(authToken, claims);
+
+			loginData.token = authToken;
+			loginData.statut = true;
+			loginData.motif = "Success";
+			loginData.id = ressource.getId();
+			loginData.role = ressource.getRole();
+
 		}
-		return null;
+		return loginData;
 	}
 
 	private static final String BEARER = "Bearer";
 
-	private static String getToken(HttpHeaders headers) {
+	private static String[] getToken(HttpHeaders headers) {
 		List<String> contents = headers
 				.getRequestHeader(HttpHeaders.AUTHORIZATION);
 		for (String content : contents) {
 			content = content.trim();
 			if (content.startsWith(BEARER)) {
 				String[] parts = content.split(" ");
-				if (parts != null && parts.length > 1) {
-					return parts[1];
+				if (parts != null && parts.length > 2) {
+					return parts;
 				}
 			}
 		}
@@ -60,18 +88,44 @@ public class RessourceServiceImpl extends
 
 	@Override
 	public void logout(HttpHeaders headers) {
-		String token = getToken(headers);
+		String token = getToken(headers)[1];
 		authorizationTokensStorage.remove(token);
 
 	}
 
 	@Override
 	public boolean isAuthTokenValid(HttpHeaders headers) {
-		String token = getToken(headers);
-		if (authorizationTokensStorage.containsKey(token))
-			return true;
-		else
-			return false;
-	}
+		String token = getToken(headers)[1];
+		try {
+			HashMap<String, Object> claims = authorizationTokensStorage
+					.get(token);
+			if (claims == null)
+				return false;
+			Map<String, Object> decoded = verifier.verify(token);
+			Set<String> keys = claims.keySet();
+			for (String key : keys) {
+				if (!claims.get(key).equals(decoded.get(key)))
+					return false;
+			}
 
+//			long iat = ((Number) decoded.get("iat")).longValue();
+//			long exp = ((Number) decoded.get("exp")).longValue();
+//			System.out.println(System.currentTimeMillis() + "%%%%%%%%%%% "
+//					+ iat);
+//			System.out.println(System.currentTimeMillis() + "§§§§§§§§§§§ "
+//					+ exp);
+//
+//			if ((exp - System.currentTimeMillis() / 1000) < 0)
+//				return false;
+			return true;
+
+		} catch (InvalidKeyException | NoSuchAlgorithmException
+				| IllegalStateException | SignatureException | IOException
+				| JWTVerifyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+
+	}
 }

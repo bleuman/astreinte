@@ -45,11 +45,16 @@ var AstreinteController = function($http, $scope, $log, $rootScope,
 	$http.get('rest/typeAstreinte/').success(function(data) {
 		$scope.typesAstreinteList = data;
 	});
-
+	$scope.astreinte = new AstreinteService();
 	$scope.reset = function() {
-		$scope.astreinte = new AstreinteService();
 		$scope.astreinte.hdebut = "00:00:00";
 		$scope.astreinte.hfin = "23:59:00";
+		$scope.astreinte.statutAstreinte = {};
+		$scope.astreinte.statutAstreinte.id = 1;
+		if ($rootScope.loginData && !!$rootScope.loginData.id) {
+			$scope.astreinte.ressource = {};
+			$scope.astreinte.ressource.id = $rootScope.loginData.id;
+		}
 		var today = new Date();
 		var offsetday = "";
 		var offsetmon = "";
@@ -119,8 +124,17 @@ var AstreinteController = function($http, $scope, $log, $rootScope,
 		$http.get('rest/ressource/logout/');
 		$rootScope.token = null;
 		window.sessionStorage.removeItem('token');
-		window.location="/";
+		window.location = "/";
 	};
+	$scope.authentecated=false;
+	$scope.isauth = function() {
+		$http.get('rest/ressource/isauth/').success(function(data) {
+			$scope.authentecated = data;
+		});		;
+		
+	};
+
+	// isauth
 	$scope.reset();
 
 };

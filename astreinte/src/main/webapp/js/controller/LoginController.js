@@ -1,6 +1,6 @@
 var LoginController=function($scope, $rootScope,
 		AuthService) {
-	$rootScope.token = window.sessionStorage.getItem('token');
+	$rootScope.token = (window.sessionStorage.getItem('token')+"").split(" ") [0];
 	$scope.signin = function() {
 		var formData = {
 			login : $scope.email,
@@ -11,7 +11,8 @@ var LoginController=function($scope, $rootScope,
 			if (res.statut == false) {
 				alert(res.motif);
 			} else {
-				window.sessionStorage.setItem('token', res.token);
+				$rootScope.loginData=res;
+				window.sessionStorage.setItem('token', res.token+" "+res.id);
 				window.location = "/#/astreinte";
 			}
 		}, function() {

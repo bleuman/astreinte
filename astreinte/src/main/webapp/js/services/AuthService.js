@@ -24,9 +24,10 @@ $app.factory('AuthService', [
 			}
 
 			function getUserFromToken() {
-				var token = $rootScope.token;
+
 				var user = {};
-				if (!!token) {
+				if (!!$rootScope.token ) {
+					var token = $rootScope.token;
 					var encoded = token.split('.')[1];
 					user = JSON.parse(urlBase64Decode(encoded));
 				}
@@ -50,8 +51,8 @@ $app.factory('AuthService', [
 					changeUser({});
 					$rootScope.token = null;
 					window.sessionStorage.removeItem('token');
-					window.location="/";
-					
+					window.location = "/";
+
 				}
 			};
 		} ]);

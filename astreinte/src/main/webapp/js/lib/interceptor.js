@@ -10,12 +10,8 @@ var interceptor = function($rootScope, $q, $location) {
 		return {
 			'request' : function(config) {
 				config.headers = config.headers || {};
-				// alert("£££££££ "+$rootScope.token);
-				$rootScope.token = window.sessionStorage.getItem('token');
-				if (!!$rootScope.token) {
-					config.headers.Authorization = 'Bearer '
-							+ window.sessionStorage.getItem('token');
-				}
+				config.headers.Authorization = 'Bearer '
+						+ window.sessionStorage.getItem('token');
 				return config;
 			},
 			'responseError' : function(response) {

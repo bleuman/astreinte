@@ -24,21 +24,21 @@ public class RessourceDAOImpl extends GenericHibernateDAO<Ressource> implements
 		return registerFound;
 	}
 
-	public boolean checklogin(String login, String password) {
+	public Ressource checklogin(String login, String password) {
 		List<Ressource> result = getCurrentSession()
 				.createQuery("from Ressource Where login=:login")
 				.setString("login", login).list();
 		if (result == null || result.isEmpty())
-			return false;
+			return null;
 		else {
 
 			Ressource registerFound = (Ressource) result.get(0);
 			if (registerFound != null
 					&& registerFound.getPassword().equals(password))
-				return true;
+				return registerFound;
 			else
 
-				return false;
+				return null;
 		}
 	}
 }

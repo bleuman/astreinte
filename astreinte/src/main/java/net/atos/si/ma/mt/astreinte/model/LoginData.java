@@ -5,6 +5,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class LoginData {
+	
 	@XmlElement
 	public boolean statut;
 	@XmlElement
@@ -13,4 +14,9 @@ public class LoginData {
 	public String username;
 	@XmlElement
 	public String motif;
+	@XmlElement
+	public long id;
+	@XmlElement
+	public String role;
+
 }

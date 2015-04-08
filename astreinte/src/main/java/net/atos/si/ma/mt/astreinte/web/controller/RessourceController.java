@@ -66,21 +66,7 @@ public class RessourceController {
 	@Produces(MediaType.APPLICATION_JSON)
 	public LoginData checklogin(@Context HttpHeaders headers,
 			LoginObject loginObject) {
-		LoginData loginData = new LoginData();
-		loginData.statut = false;
-		loginData.username = loginObject.login;
-		loginData.motif = "Login/Password Incorrect";
-		String token = null;
-		token = ressourceService.login(loginObject.login, loginObject.password);
-		if (token != null) {
-
-			loginData.token = token;
-			loginData.statut = true;
-			loginData.motif = "Success";
-			return loginData;
-
-		}
-		return loginData;
+		return ressourceService.login(loginObject.login, loginObject.password);
 	}
 
 	@GET
@@ -88,6 +74,13 @@ public class RessourceController {
 	@Produces(MediaType.APPLICATION_JSON)
 	public void logout(@Context HttpHeaders headers) {
 		ressourceService.logout(headers);
+	}
+	
+	@GET
+	@Path("/isauth/")
+	@Produces(MediaType.APPLICATION_JSON)
+	public boolean isauth(@Context HttpHeaders headers) {
+		return ressourceService.isAuthTokenValid(headers);
 	}
 
 	public RessourceService getRessourceService() {

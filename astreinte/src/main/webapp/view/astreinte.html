@@ -4,7 +4,7 @@
 <body>
 
 	<div class="page-header" data-ng-show="!!token">
-		<h1>Gestion Astreinte {{astreinte.id}}</h1>
+		<h1>Gestion Astreinte {{astreinte.id}} </h1><h3>connected user : {{loginData.username}} ({{loginData.role}}) -{{authentecated}} </h3>
 		<div class="btn-group">
 
 			<div class="btn-group">
@@ -20,11 +20,14 @@
 				</ul>
 			</div>
 			<div class="btn-group">
-				<button type="button" class="btn btn-primary" ng-click="logout()">Logout</button>
+				<button type="button" class="btn btn-primary" data-ng-click="logout()">Logout</button>
+			</div>
+			<div class="btn-group">
+				<button type="button" class="btn btn-primary" data-ng-click="isauth()">check login</button>
 			</div>
 		</div>
 	</div>
-
+	{{loginData}}
 
 	<!-- Modal -->
 	<div class="modal fade bs-example-modal-lg" id="chevModal"
@@ -42,7 +45,7 @@
 				</div>
 				<div class="modal-body">
 
-					<div ng-show="checkChevechmentList.length > 0">
+					<div data-ng-show="checkChevechmentList.length > 0">
 
 						<table class="table table-striped">
 							<thead>
@@ -57,8 +60,8 @@
 
 								</tr>
 							</thead>
-							<tr ng-repeat="castr in checkChevechmentList">
-								<td><a href ng-click="edit(castr)"> {{castr.id}} </a></td>
+							<tr data-ng-repeat="castr in checkChevechmentList">
+								<td><a href data-ng-click="edit(castr)"> {{castr.id}} </a></td>
 								<td>{{castr.ticket.qc}}</td>
 								<td>{{castr.ressource.prenom}}</td>
 								<td>{{castr.ressource.nom}}</td>
@@ -72,7 +75,7 @@
 								<tr>
 									<th>avec la nouvelle saisie</th>
 									<th colspan="3">{{astreinte.ticket.qc}}</th>
-									
+
 									<th>{{astreinte.dateAstreinte | date :"dd/MM/yyyy"}}</th>
 									<th>{{astreinte.hdebut | date : 'hh:mm:ss'}}</th>
 									<th>{{astreinte.hfin | date:"hh:mm:ss"}}</th>
@@ -98,37 +101,37 @@
 
 			<div class="form-group">
 				<label class="label label-primary" for="idQC">QC</label> <select
-					class="form-control" id="idQC" ng-model="astreinte.ticket.id"
-					ng-change="byressource()"
-					ng-options="tck.id as tck.qc for tck in listeTickets"></select> <label
-					for="ressource">Ressource</label> <select class="form-control"
-					ng-model="astreinte.ressource.id" ng-change="byressource()"
-					ng-options="res.id as res.nom group by res.role for res in listeRessources"></select>
+					class="form-control" id="idQC" data-ng-model="astreinte.ticket.id"
+					data-ng-change="byressource()"
+					data-ng-options="tck.id as tck.qc for tck in listeTickets"></select> 
+					<label data-ng-show="loginData.role=='CP'" for="ressource">Ressource</label> <select data-ng-show="loginData.role=='CP'" class="form-control"
+					data-ng-model="astreinte.ressource.id" data-ng-change="byressource()"
+					data-ng-options="res.id as res.nom group by res.role for res in listeRessources"></select>
 
 				<label class="label label-primary" for="typeAstreinte">Type
 					astreinte</label> <select class="form-control" id="typeAstreinte"
-					ng-model="astreinte.typeAstreinte.id"
-					ng-options="tp.id as tp.libelle for tp in typesAstreinteList"></select>
+					data-ng-model="astreinte.typeAstreinte.id"
+					data-ng-options="tp.id as tp.libelle for tp in typesAstreinteList"></select>
 			</div>
 
 			<div class="form-group">
 				<label class="label label-primary" for="adate">Date</label> <input
 					class="form-control" id="adate" type="date"
-					ng-model="astreinte.dateAstreinte" ng-required="true" /> <label
+					ng-model="astreinte.dateAstreinte" data-ng-required="true" /> <label
 					class="label label-primary" for="hdebut">Debut</label> <input
 					class="form-control" id="hdebut" type="time"
 					ng-model="astreinte.hdebut" /> <label class="label label-primary"
 					for="hfin">Fin</label> <input class="form-control" id="hfin"
-					type="time" ng-model="astreinte.hfin" />
+					type="time" data-ng-model="astreinte.hfin" />
 			</div>
 
 			<div class="form-group">
-				<button class="btn btn-warning" ng-click="checkChevechment()"
+				<button class="btn btn-warning" data-ng-click="checkChevechment()"
 					type="button">Ckeck</button>
 
 				<input type="submit" class="btn btn-success" value="save"
-					ng-click="save()" ng-disabled="astreinteform.$invalid" /> <input
-					type="reset" class="btn btn-info" value="clear" ng-click="reset()" />
+					ng-click="save()" data-ng-disabled="astreinteform.$invalid" /> <input
+					type="reset" class="btn btn-info" value="clear" data-ng-click="reset()" />
 			</div>
 
 
@@ -148,11 +151,12 @@
 					<th>Fin</th>
 					<th>K</th>
 					<th>Charge</th>
+					<th>Statut</th>
 					<th>Action</th>
 				</tr>
 			</thead>
-			<tr ng-repeat="astr in listAstreinte track by $index">
-				<td><a href ng-click="edit(astr)"> {{astr.id}} </a></td>
+			<tr data-ng-repeat="astr in listAstreinte track by $index">
+				<td><a href data-ng-click="edit(astr)"> {{astr.id}} </a></td>
 				<td>{{astr.ticket.qc}}</td>
 				<td>{{astr.ressource.prenom}}</td>
 				<td>{{astr.ressource.nom}}</td>
@@ -162,7 +166,8 @@
 
 				<td>{{astr.k}}</td>
 				<td>{{astr.charge | number:2}}</td>
-				<td><a href ng-click="remove(astr.id)">Remover</a></td>
+				<td>{{astr.statutAstreinte.libelle}}</td>
+				<td><a data-ng-click="remove(astr.id)">Remover</a></td>
 			</tr>
 			<tfoot>
 				<tr>
