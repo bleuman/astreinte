@@ -70,10 +70,9 @@
 							</tr>
 							<tfoot>
 								<tr>
-									<td><a href ng-click="edit(castr)"> {{astreinte.id}} </a></td>
-									<th>{{astreinte.ticket.qc}}</th>
-									<th>{{astreinte.ressource.prenom}}</th>
-									<th>{{astreinte.ressource.nom}}</th>
+									<th>avec la nouvelle saisie</th>
+									<th colspan="3">{{astreinte.ticket.qc}}</th>
+									
 									<th>{{astreinte.dateAstreinte | date :"dd/MM/yyyy"}}</th>
 									<th>{{astreinte.hdebut | date : 'hh:mm:ss'}}</th>
 									<th>{{astreinte.hfin | date:"hh:mm:ss"}}</th>
@@ -163,7 +162,7 @@
 
 				<td>{{astr.k}}</td>
 				<td>{{astr.charge | number:2}}</td>
-				<td><a href ng-click="remove(astr)">Remover</a></td>
+				<td><a href ng-click="remove(astr.id)">Remover</a></td>
 			</tr>
 			<tfoot>
 				<tr>

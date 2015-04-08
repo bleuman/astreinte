@@ -86,11 +86,8 @@ public class RessourceController {
 	@GET
 	@Path("/logout/")
 	@Produces(MediaType.APPLICATION_JSON)
-	public LoginData logout(@Context HttpHeaders headers) {
+	public void logout(@Context HttpHeaders headers) {
 		ressourceService.logout(headers);
-		LoginData loginData = new LoginData();
-		loginData.statut = false;
-		return loginData;
 	}
 
 	public RessourceService getRessourceService() {

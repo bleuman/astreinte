@@ -1,5 +1,5 @@
 var AstreinteController = function($http, $scope, $log, $rootScope,
-		AstreinteService, AuthService) {
+		AstreinteService) {
 	$rootScope.token = window.sessionStorage.getItem('token');
 	if (!$rootScope.token) {
 		window.location = "/";
@@ -95,9 +95,9 @@ var AstreinteController = function($http, $scope, $log, $rootScope,
 		$scope.astreinte = astreinte;
 	};
 
-	$scope.remove = function(astreinte) {
-		astreinte.$remove({
-			id : astreinte.id
+	$scope.remove = function(ida) {
+		(new AstreinteService()).$remove({
+			id : ida
 		}, function(res) {
 			$scope.byressource();
 		});
@@ -116,11 +116,14 @@ var AstreinteController = function($http, $scope, $log, $rootScope,
 		}
 	};
 	$scope.logout = function() {
-		AuthService.logout();
+		$http.get('rest/ressource/logout/');
+		$rootScope.token = null;
+		window.sessionStorage.removeItem('token');
+		window.location="/";
 	};
 	$scope.reset();
 
 };
 
 AstreinteController.$inject = [ '$http', '$scope', '$log', '$rootScope',
-		'AstreinteService', 'AuthService' ];
+		'AstreinteService' ];
