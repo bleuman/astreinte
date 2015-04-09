@@ -10,7 +10,7 @@ var interceptor = function($rootScope, $q, $location) {
 		return {
 			'request' : function(config) {
 				config.headers = config.headers || {};
-				config.headers.Authorization = 'Bearer '
+				config.headers.Authorization = 'Bearer 1'
 						+ window.sessionStorage.getItem('token');
 				return config;
 			},

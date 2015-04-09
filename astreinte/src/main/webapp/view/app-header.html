@@ -1,0 +1,38 @@
+<nav class="navbar navbar-default">
+	<div class="container-fluid">
+		<!-- Brand and toggle get grouped for better mobile display -->
+
+
+		<div class="navbar-header">
+
+			<a class="navbar-brand" href="/#/astreinte">Astreinte</a>
+		</div>
+		<div class="navbar-header">
+
+			<a class="navbar-brand" href="/#/ticket">Ticket</a>
+		</div>
+
+		<!-- Collect the nav links, forms, and other content for toggling -->
+		<div class="collapse navbar-collapse"
+			id="bs-example-navbar-collapse-1">
+
+
+
+
+
+
+			<button type="button" ng-click="isauth()"
+				class="btn btn-default navbar-btn navbar-right">connected
+				user : {{loginData.username}} ({{loginData.role}}) connected
+				{{'('+authentecated+')'}}</button>
+
+			<button type="button" ng-click="logout()"
+				class="btn btn-default navbar-btn navbar-right">Logout</button>
+		</div>
+
+		<!-- /.navbar-collapse -->
+	</div>
+	<!-- /.container-fluid -->
+</nav>
+
+

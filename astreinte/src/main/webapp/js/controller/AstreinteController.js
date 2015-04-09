@@ -1,9 +1,6 @@
 var AstreinteController = function($http, $scope, $log, $rootScope,
 		AstreinteService) {
-	$rootScope.token = window.sessionStorage.getItem('token');
-	if (!$rootScope.token) {
-		window.location = "/";
-	}
+	
 	$scope.byressource = function() {
 		idqc = -1;
 		idressource = -1;
@@ -45,10 +42,11 @@ var AstreinteController = function($http, $scope, $log, $rootScope,
 	$http.get('rest/typeAstreinte/').success(function(data) {
 		$scope.typesAstreinteList = data;
 	});
-	$scope.astreinte = new AstreinteService();
+	
 	$scope.reset = function() {
-		$scope.astreinte.hdebut = "00:00:00";
-		$scope.astreinte.hfin = "23:59:00";
+		$scope.astreinte = {};
+		$scope.astreinte.hdebut = "00:00";
+		$scope.astreinte.hfin = "23:59";
 		$scope.astreinte.statutAstreinte = {};
 		$scope.astreinte.statutAstreinte.id = 1;
 		if ($rootScope.loginData && !!$rootScope.loginData.id) {
@@ -78,7 +76,7 @@ var AstreinteController = function($http, $scope, $log, $rootScope,
 		if ($scope.astreinte.id > 0) {
 			$scope.update();
 		} else {
-			$scope.astreinte.$create(function() {
+			AstreinteService.create($scope.astreinte, function() {
 				$scope.byressource();
 				$scope.reset();
 			});
@@ -90,7 +88,7 @@ var AstreinteController = function($http, $scope, $log, $rootScope,
 		if ($scope.checkChevechmentList.length > 0) {
 			return;
 		}
-		$scope.astreinte.$update(function() {
+		AstreinteService.update($scope.astreinte, function() {
 			$scope.byressource();
 			$scope.reset();
 		});
@@ -101,7 +99,7 @@ var AstreinteController = function($http, $scope, $log, $rootScope,
 	};
 
 	$scope.remove = function(ida) {
-		(new AstreinteService()).$remove({
+		AstreinteService.remove({
 			id : ida
 		}, function(res) {
 			$scope.byressource();
@@ -126,21 +124,45 @@ var AstreinteController = function($http, $scope, $log, $rootScope,
 		window.sessionStorage.removeItem('token');
 		window.location = "/";
 	};
-	$scope.authentecated = false;
+	$rootScope.authentecated = "false";
 	$scope.isauth = function() {
-		$http.get('rest/ressource/isauth/').success(function(data) {
-			$scope.authentecated = data;
-		});
 
-		if (!$scope.authentecated) {
-			window.sessionStorage.removeItem('token');
-			window.location = "/";
+		$http.get('rest/ressource/isauth/').success(
+				function(data, status, headers, config) {
+					$rootScope.authentecated = data;
+					console.info("success : data:" + data + "|status: "
+							+ status + "|headers: " + headers + "|config: "
+							+ config);
+					if ($rootScope.authentecated != "true") {
+						console.info("disconnected");
+						// window.sessionStorage.removeItem('token');
+						window.location = "/";
+					}
+				}).error(
+				function(data, status, headers, config) {
+					console.info("error : data:" + data + "|status: " + status
+							+ "|headers: " + headers + "|config: " + config);
+					if ($rootScope.authentecated != "true") {
+						console.info("2 disconnected");
+						// window.sessionStorage.removeItem('token');
+						window.location = "/";
+					}
+				});
+
+		if (!$rootScope.authentecated) {
+			console.error("3 disconnected");
+			// window.sessionStorage.removeItem('token');
+			// window.location = "/";
 		}
 
 	};
 
 	// isauth
 	$scope.reset();
+	$rootScope.token = window.sessionStorage.getItem('token');
+	if (!$rootScope.token) {
+		window.location = "/";
+	}
 
 };
 
