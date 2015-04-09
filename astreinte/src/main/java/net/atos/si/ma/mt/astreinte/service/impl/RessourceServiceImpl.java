@@ -1,6 +1,7 @@
 package net.atos.si.ma.mt.astreinte.service.impl;
 
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -15,7 +16,9 @@ import javax.ws.rs.core.HttpHeaders;
 import net.atos.si.ma.mt.astreinte.dao.RessourceDAO;
 import net.atos.si.ma.mt.astreinte.model.LoginData;
 import net.atos.si.ma.mt.astreinte.model.Ressource;
+import net.atos.si.ma.mt.astreinte.service.AuthorizationException;
 import net.atos.si.ma.mt.astreinte.service.RessourceService;
+import net.atos.si.ma.mt.astreinte.web.controller.AllowedRoles;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -60,7 +63,7 @@ public class RessourceServiceImpl extends
 			HashMap<String, Object> claims = new HashMap<String, Object>();
 			claims.put(ressource.getId() + "", ressource.getRole());
 			String authToken = signer.sign(claims, new JWTSigner.Options()
-					.setExpirySeconds(60).setIssuedAt(true));
+					.setExpirySeconds(6000).setIssuedAt(true));
 			// authorizationTokensStorage.put(authToken, claims);
 
 			loginData.token = authToken;
@@ -134,24 +137,50 @@ public class RessourceServiceImpl extends
 		for (StackTraceElement s : stacks) {
 			String className = s.getClassName();
 			String methodName = s.getMethodName();
-			if (className.contains(CTRPACKAGE)){
+			if (className.contains(CTRPACKAGE)) {
 				System.out.println("*** stack: " + className + " --> "
 						+ methodName);
 				try {
 					Class clazz = Class.forName(className);
-					Method[] methods =clazz.getDeclaredMethods();
+					Method[] methods = clazz.getDeclaredMethods();
 					for (Method meth : methods) {
-						String methName=meth.getName();
-						if(methName.equals(methodName))
-							System.out.println("%%%%%%%%%%%%%%%%%% "+meth.getName());
+						String methName = meth.getName();
+						if (methName.equals(methodName)) {
+							Annotation[] decalredAnno = meth
+									.getDeclaredAnnotations();
+							for (Annotation annotation : decalredAnno) {
+								System.out.println("£££££££ "
+										+ annotation.getClass()
+												.getCanonicalName());
+							}
+							AllowedRoles annot = meth
+									.getAnnotation(AllowedRoles.class);
+							String role = getRole(headers);
+							if (annot != null) {
+								boolean connected = isAuthTokenValid(headers);
+								if (annot.mustConnect() && !connected)
+									return false;
+								if (role == null)
+									return false;
+								else {
+									if (annot.roles().equals("*"))
+										return true;
+									if (annot.roles().contains(role)) {
+										return true;
+									} else {
+										return false;
+
+									}
+								}
+							}
+						}
 					}
-					
-					
+
 				} catch (SecurityException | ClassNotFoundException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
+
 			}
 		}
 		return false;
@@ -163,9 +192,9 @@ public class RessourceServiceImpl extends
 		if (parts == null || parts.length < 1)
 			return null;
 		String token = parts[1];
-		String idres= parts[2];
+		String idres = parts[2];
 		try {
-			
+
 			Map<String, Object> decoded = verifier.verify(token);
 			/*
 			 * Set<String> keys = claims.keySet(); for (String key : keys) { if
@@ -180,5 +209,13 @@ public class RessourceServiceImpl extends
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	@Override
+	public void canDoOrException(HttpHeaders headers)
+			throws AuthorizationException {
+		if (!canDo(headers))
+			throw new AuthorizationException();
+
 	}
 }

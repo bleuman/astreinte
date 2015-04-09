@@ -19,6 +19,7 @@ public interface RessourceService extends GenericService<Ressource> {
 	boolean isAuthTokenValid(HttpHeaders headers);
 
 	boolean canDo(HttpHeaders headers);
+	void canDoOrException(HttpHeaders headers) throws AuthorizationException;
 
 	String getRole(HttpHeaders headers);
 }

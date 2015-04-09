@@ -17,6 +17,7 @@ import javax.ws.rs.core.MediaType;
 import net.atos.si.ma.mt.astreinte.model.LoginData;
 import net.atos.si.ma.mt.astreinte.model.LoginObject;
 import net.atos.si.ma.mt.astreinte.model.Ressource;
+import net.atos.si.ma.mt.astreinte.service.AuthorizationException;
 import net.atos.si.ma.mt.astreinte.service.RessourceService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,12 +54,10 @@ public class RessourceController {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Ressource> listAll(@Context HttpHeaders headers) {
-		ressourceService.canDo(headers);
-		if (ressourceService.isAuthTokenValid(headers)) {
-			return ressourceService.listAll();
-		} else
-			return null;
+	@AllowedRoles(mustConnect = true)
+	public List<Ressource> listAll(@Context HttpHeaders headers) throws AuthorizationException {
+		ressourceService.canDoOrException(headers);
+		return ressourceService.listAll();
 
 	}
 
@@ -76,7 +75,7 @@ public class RessourceController {
 	public void logout(@Context HttpHeaders headers) {
 		ressourceService.logout(headers);
 	}
-	
+
 	@GET
 	@Path("/isauth/")
 	@Produces(MediaType.APPLICATION_JSON)
