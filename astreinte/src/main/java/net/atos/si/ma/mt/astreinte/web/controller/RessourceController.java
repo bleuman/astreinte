@@ -54,6 +54,7 @@ public class RessourceController {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Ressource> listAll(@Context HttpHeaders headers) {
+		ressourceService.canDo(headers);
 		if (ressourceService.isAuthTokenValid(headers)) {
 			return ressourceService.listAll();
 		} else

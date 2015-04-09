@@ -1,6 +1,7 @@
 package net.atos.si.ma.mt.astreinte.service.impl;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
@@ -27,8 +28,11 @@ import com.auth0.jwt.JWTVerifyException;
 @Service
 public class RessourceServiceImpl extends
 		GenericServiceImpl<Ressource, RessourceDAO> implements RessourceService {
-	//private final Map<String, HashMap<String, Object>> authorizationTokensStorage = new HashMap<String, HashMap<String, Object>>();
+	// private final Map<String, HashMap<String, Object>>
+	// authorizationTokensStorage = new HashMap<String, HashMap<String,
+	// Object>>();
 	private static final String SECRET = "my secret";
+	private static final String CTRPACKAGE = "net.atos.si.ma.mt.astreinte.web.controller";
 	private static JWTSigner signer = new JWTSigner(SECRET);
 	private static JWTVerifier verifier = new JWTVerifier(SECRET);
 
@@ -54,10 +58,10 @@ public class RessourceServiceImpl extends
 		if (ressource != null) {
 			// String authToken = UUID.randomUUID().toString();
 			HashMap<String, Object> claims = new HashMap<String, Object>();
-			claims.put(ressource.getId() + "", ressource.getLogin());
+			claims.put(ressource.getId() + "", ressource.getRole());
 			String authToken = signer.sign(claims, new JWTSigner.Options()
 					.setExpirySeconds(60).setIssuedAt(true));
-			//authorizationTokensStorage.put(authToken, claims);
+			// authorizationTokensStorage.put(authToken, claims);
 
 			loginData.token = authToken;
 			loginData.statut = true;
@@ -91,7 +95,7 @@ public class RessourceServiceImpl extends
 		String[] parts = getToken(headers);
 		if (parts != null) {
 			String token = parts[1];
-			//authorizationTokensStorage.remove(token);
+			// authorizationTokensStorage.remove(token);
 		}
 
 	}
@@ -99,19 +103,19 @@ public class RessourceServiceImpl extends
 	@Override
 	public boolean isAuthTokenValid(HttpHeaders headers) {
 		String[] parts = getToken(headers);
-		if (parts == null || parts.length<1) 
+		if (parts == null || parts.length < 1)
 			return false;
 		String token = parts[1];
 		try {
-		/*	HashMap<String, Object> claims = authorizationTokensStorage					.get(token);
-			if (claims == null)
-				return false;*/
+			/*
+			 * HashMap<String, Object> claims = authorizationTokensStorage
+			 * .get(token); if (claims == null) return false;
+			 */
 			Map<String, Object> decoded = verifier.verify(token);
-			/*Set<String> keys = claims.keySet();
-			for (String key : keys) {
-				if (!claims.get(key).equals(decoded.get(key)))
-					return false;
-			}*/
+			/*
+			 * Set<String> keys = claims.keySet(); for (String key : keys) { if
+			 * (!claims.get(key).equals(decoded.get(key))) return false; }
+			 */
 			return true;
 
 		} catch (InvalidKeyException | NoSuchAlgorithmException
@@ -122,5 +126,59 @@ public class RessourceServiceImpl extends
 			return false;
 		}
 
+	}
+
+	@Override
+	public boolean canDo(HttpHeaders headers) {
+		StackTraceElement[] stacks = Thread.currentThread().getStackTrace();
+		for (StackTraceElement s : stacks) {
+			String className = s.getClassName();
+			String methodName = s.getMethodName();
+			if (className.contains(CTRPACKAGE)){
+				System.out.println("*** stack: " + className + " --> "
+						+ methodName);
+				try {
+					Class clazz = Class.forName(className);
+					Method[] methods =clazz.getDeclaredMethods();
+					for (Method meth : methods) {
+						String methName=meth.getName();
+						if(methName.equals(methodName))
+							System.out.println("%%%%%%%%%%%%%%%%%% "+meth.getName());
+					}
+					
+					
+				} catch (SecurityException | ClassNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public String getRole(HttpHeaders headers) {
+		String[] parts = getToken(headers);
+		if (parts == null || parts.length < 1)
+			return null;
+		String token = parts[1];
+		String idres= parts[2];
+		try {
+			
+			Map<String, Object> decoded = verifier.verify(token);
+			/*
+			 * Set<String> keys = claims.keySet(); for (String key : keys) { if
+			 * (!claims.get(key).equals(decoded.get(key))) return false; }
+			 */
+			return (String) decoded.get(idres);
+
+		} catch (InvalidKeyException | NoSuchAlgorithmException
+				| IllegalStateException | SignatureException | IOException
+				| JWTVerifyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
 	}
 }
