@@ -4,12 +4,13 @@ import java.util.List;
 
 import net.atos.si.ma.mt.astreinte.dao.RessourceDAO;
 import net.atos.si.ma.mt.astreinte.model.Ressource;
+import net.atos.si.ma.mt.auth2.LoginService;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-@Transactional 
+@Transactional
 public class RessourceDAOImpl extends GenericHibernateDAO<Ressource> implements
 		RessourceDAO {
 
@@ -24,7 +25,8 @@ public class RessourceDAOImpl extends GenericHibernateDAO<Ressource> implements
 		return registerFound;
 	}
 
-	public Ressource checklogin(String login, String password) {
+	@Override
+	public String checkLogin(String login, String password) {
 		List<Ressource> result = getCurrentSession()
 				.createQuery("from Ressource Where login=:login")
 				.setString("login", login).list();
@@ -35,7 +37,7 @@ public class RessourceDAOImpl extends GenericHibernateDAO<Ressource> implements
 			Ressource registerFound = (Ressource) result.get(0);
 			if (registerFound != null
 					&& registerFound.getPassword().equals(password))
-				return registerFound;
+				return registerFound.getRole();
 			else
 
 				return null;

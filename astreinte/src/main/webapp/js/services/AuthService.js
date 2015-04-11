@@ -4,7 +4,7 @@ $app.factory('AuthService', [
 		'$http',
 		'$rootScope',
 		function($http, $rootScope) {
-			var baseUrl = "rest/ressource/";
+			var baseUrl = "rest/login/";
 
 			function urlBase64Decode(str) {
 				var output = str.replace('-', '+').replace('_', '/');

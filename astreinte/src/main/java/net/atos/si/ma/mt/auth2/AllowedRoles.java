@@ -1,4 +1,4 @@
-package net.atos.si.ma.mt.astreinte.web.controller;
+package net.atos.si.ma.mt.auth2;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

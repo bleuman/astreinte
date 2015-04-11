@@ -14,10 +14,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
-import net.atos.si.ma.mt.astreinte.model.LoginData;
-import net.atos.si.ma.mt.astreinte.model.LoginObject;
 import net.atos.si.ma.mt.astreinte.model.Ressource;
-import net.atos.si.ma.mt.astreinte.service.AuthorizationException;
 import net.atos.si.ma.mt.astreinte.service.RessourceService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,34 +51,12 @@ public class RessourceController {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@AllowedRoles(mustConnect = true)
-	public List<Ressource> listAll(@Context HttpHeaders headers) throws AuthorizationException {
-		ressourceService.canDoOrException(headers);
+	public List<Ressource> listAll(@Context HttpHeaders headers) {
 		return ressourceService.listAll();
 
 	}
 
-	@POST
-	@Path("/authenticate/")
-	@Produces(MediaType.APPLICATION_JSON)
-	public LoginData checklogin(@Context HttpHeaders headers,
-			LoginObject loginObject) {
-		return ressourceService.login(loginObject.login, loginObject.password);
-	}
-
-	@GET
-	@Path("/logout/")
-	@Produces(MediaType.APPLICATION_JSON)
-	public void logout(@Context HttpHeaders headers) {
-		ressourceService.logout(headers);
-	}
-
-	@GET
-	@Path("/isauth/")
-	@Produces(MediaType.APPLICATION_JSON)
-	public boolean isauth(@Context HttpHeaders headers) {
-		return ressourceService.isAuthTokenValid(headers);
-	}
+	
 
 	public RessourceService getRessourceService() {
 		return ressourceService;
