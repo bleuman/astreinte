@@ -1,0 +1,102 @@
+<div class="panel panel-default">
+	<!-- Default panel contents -->
+
+	<div class="row" ui-sortable>
+		<div data-ng-repeat="astr in listAstreinte " class="col-sm-3 col-md-6"
+			style="cursor: move;">
+			<div class="thumbnail">
+				<span class="glyphicon glyphicon-star"> {{astr.ticket.qc}}</span> <label
+					data-ng-class="'label label-'+(astr.statutAstreinte.id == 1 ? 'info': (astr.statutAstreinte.id != 2 ? 'warning':'primary'))+' label-sm'">
+					{{astr.statutAstreinte.libelle}}</label>
+				<div class="btn-group" role="group">
+
+
+					<label data-ng-disabled="astr.statutAstreinte.id==1"
+						class="label label-info label-sm" data-ng-click="ongoing(astr)"><span
+						class="glyphicon glyphicon-pushpin"></span></label> <label
+						data-ng-disabled="astr.statutAstreinte.id==3"
+						class="label label-warning label-sm"
+						data-ng-click="rejected(astr)"><span
+						class="glyphicon glyphicon-remove"></span></label> <label
+						data-ng-disabled="astr.statutAstreinte.id==2"
+						class="label label-primary label-sm" data-ng-click="valide(astr)"><span
+						class="glyphicon glyphicon-ok"></span></label>
+				</div>
+
+				<div class="caption">
+
+					<div class="row">
+						<span class="glyphicon glyphicon-user">
+							{{astr.ressource.prenom}} {{astr.ressource.nom}}</span>
+					</div>
+					<div class="row">
+						<span class="glyphicon glyphicon-calendar">
+							{{astr.dateAstreinte | date :"dd/MM/yyyy"}} </span> <span
+							class="glyphicon glyphicon-log-in"> {{astr.hdebut | date :
+							"hh:mm"}}</span> <span class="glyphicon glyphicon-log-out">
+							{{astr.hfin | date:"hh:mm"}}</span>
+
+
+
+					</div>
+					<div class="row">
+						<span
+							class="glyphicon glyphicon-{{astr.typeAstreinte.id==1?'phone-alt':'cog'}}">
+							{{astr.typeAstreinte.libelle}} ({{8 * astr.charge / astr.k|
+							number:1}}H) (k:{{astr.k}})</span> <span
+							class="glyphicon glyphicon-euro"> {{astr.charge |
+							number:2}} </span>
+
+					</div>
+					<div class="row">
+						<label class="label label-warning" data-ng-click="edit(astr)"><span
+							class="glyphicon glyphicon-edit"> Edit </span></label> <label
+							class="label label-danger" data-ng-click="remove(astr.id)"><span
+							class="glyphicon glyphicon-remove-circle"> Delete</span></label>
+					</div>
+
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Table -->
+	<button type="button" class="btn btn-primary" data-toggle="modal"
+		data-target="#modaldetail">Format</button>
+
+	<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog"
+		id="modaldetail" aria-labelledby="myLargeModalLabel"
+		aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+			<div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+      </div>
+				<table class="table">
+					<thead>
+						<tr>
+						<th>Site</th>
+						<th>Nom</th>
+						<th>Prénom</th>
+						<th>Start: D&H</th>
+						<th>End: D&H</th>
+
+						</tr>
+					</thead>
+					<tr data-ng-repeat="astr in listAstreinte ">
+						<td>{{astr.typeAstreinte.id==2?"oui":"non"}}</td>
+						<td>{{astr.ressource.nom}}</td>
+						<td>{{astr.ressource.prenom}}</td>
+						<td>{{astr.dateAstreinte | date :"dd/MM/yyyy"}} {{astr.hdebut
+							| date: "hh:mm"}}</td>
+						<td>{{astr.dateAstreinte | date :"dd/MM/yyyy"}} {{astr.hfin |
+							date: "hh:mm"}}</td>
+					</tr>
+
+				</table>
+			</div>
+		</div>
+	</div>
+</div>

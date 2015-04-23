@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+
+
+
+	<div class="panel panel-default" ng-show='resultats.length > 0'>
+		<div class="panel-heading">Resultats</div>
+		<div class="panel-body">
+
+
+
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>Id</th>
+						<th>Nom</th>
+						<th>Prenom</th>
+						<th>Role</th>
+
+						<th colspan="2">Action</th>
+					</tr>
+				</thead>
+				<tr ng-repeat="astr in resultats">
+					<td><a href ng-click="edit(astr)"> {{astr.id}} </a></td>
+					<td>{{astr.nom}}</td>
+					<td>{{astr.prenom}}</td>
+					<td>{{astr.role}}</td>
+					<td></td>
+					<td><a href ng-click="remove(astr)">Remover</a></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<div class="panel panel-default">
+		<div class="panel-heading">Ressource</div>
+		<div class="panel-body">
+			<form class="form-horizontal" name="ticketform" role="form">
+
+				<div class="form-group">
+					<label class="label label-primary" for="libelle">Nom</label><input
+						name="libelle" type="text" ng-model="ressource.nom" />
+						<label class="label label-primary" for="libelle">Prenom</label><input
+						name="libelle" type="text" ng-model="ressource.prenom" />
+						<label class="label label-primary" for="libelle">Role</label><input
+						name="libelle" type="text" ng-model="ressource.role" />
+				</div>
+
+
+				<div class="form-group">
+					<input type="submit" class="btn btn-success btn-lg" value="save"
+						ng-click="save()" ng-disabled="ticketform.$invalid" /> <input
+						type="reset" class="btn btn-info btn-lg" value="clear"
+						ng-click="reset()" />
+				</div>
+
+			</form>
+		</div>
+	</div>
+
+</body>
+</html>

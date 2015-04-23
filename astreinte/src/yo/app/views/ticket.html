@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+
+	<div class="panel panel-default">
+		<div class="panel-heading">Recherche</div>
+		<div class="panel-body">
+
+
+
+
+			<input type="text" ng-model="recherche" placeholder="Search for...">
+			<button class="btn btn-default"
+				ng-click="rechercherTicket(recherche)" type="button">Recherche</button>
+		</div>
+
+	</div>
+
+
+	<div class="panel panel-default" ng-show='resultats.length > 0'>
+		<div class="panel-heading">Resultats</div>
+		<div class="panel-body">
+
+
+
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>Id</th>
+						<th>QC</th>
+						<th>Libelle</th>
+						<th>CP</th>				
+
+						<th colspan="2">Action</th>
+					</tr>
+				</thead>
+				<tr ng-repeat="astr in resultats">
+					<td><a href ng-click="edit(astr)"> {{astr.id}} </a></td>
+					<td>{{astr.qc}}</td>
+					<td>{{astr.libelle}}</td>
+					<td>{{astr.cp.nom}}</td>
+					<td></td>
+					<td><a href ng-click="remove(astr)">Remover</a></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<div class="panel panel-default">
+		<div class="panel-heading">Ticket</div>
+		<div class="panel-body">
+			<form class="form-horizontal" name="ticketform" role="form">
+
+				<div class="form-group">
+					<label class="label label-primary" for="qc">QC</label> <input
+						name="qc" type="text" ng-model="ticket.qc" /> <label
+						class="label label-primary" for="libelle">Libelle</label><input
+						name="libelle" type="text" ng-model="ticket.libelle" />
+				</div>
+				<div class="form-group">
+					<label class="label label-primary" for="libelle">CP</label> <select
+						name="cp" ng-model="ticket.cp.id">
+						<option ng-repeat="mgr in mangersList" value="{{mgr.id}}">{{mgr.nom}}</option>
+					</select> <label class="label label-primary" for="pmo">PMO</label> <select
+						name="pmo" ng-model="ticket.pmo.id">
+						<option ng-repeat="mgr in mangersList" value="{{mgr.id}}">{{mgr.nom}}</option>
+					</select> <label class="label label-primary" for="pmo">FO</label> <select
+						name="fo" ng-model="ticket.fo.id">
+						<option ng-repeat="mgr in mangersList" value="{{mgr.id}}">{{mgr.nom}}</option>
+					</select> <label class="label label-primary" for="pmo">dir</label> <select
+						name="dir" ng-model="ticket.dir.id">
+						<option ng-repeat="mgr in mangersList" value="{{mgr.id}}">{{mgr.nom}}</option>
+					</select>
+				</div>
+
+				<div class="form-group">
+					<input type="submit" class="btn btn-success btn-lg" value="save"
+						ng-click="save()" ng-disabled="ticketform.$invalid" /> <input
+						type="reset" class="btn btn-info btn-lg" value="clear"
+						ng-click="reset()" />
+				</div>
+
+			</form>
+		</div>
+	</div>
+
+</body>
+</html>
