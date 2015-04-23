@@ -16,6 +16,7 @@ import javax.ws.rs.core.MediaType;
 
 import net.atos.si.ma.mt.astreinte.model.Ressource;
 import net.atos.si.ma.mt.astreinte.service.RessourceService;
+import net.atos.si.ma.mt.auth2.AllowedRoles;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Controller;
 
 @Controller
 @Path("/ressource")
+
 public class RessourceController {
 
 	@Autowired
@@ -31,6 +33,7 @@ public class RessourceController {
 
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
+	@AllowedRoles(roles="CP")
 	public void save(Ressource ressource) {
 		ressourceService.save(ressource);
 	}
@@ -38,6 +41,7 @@ public class RessourceController {
 	@DELETE
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}")
+	@AllowedRoles(roles="CP")
 	public void delete(@PathParam("id") Long id) {
 		Ressource ressource = ressourceService.find(id);
 		ressourceService.delete(ressource);
@@ -45,12 +49,14 @@ public class RessourceController {
 
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
+	@AllowedRoles(roles="CP")
 	public void update(Ressource ressource) {
 		ressourceService.update(ressource);
 	}
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
+	@AllowedRoles(roles="CP")
 	public List<Ressource> listAll(@Context HttpHeaders headers) {
 		return ressourceService.listAll();
 

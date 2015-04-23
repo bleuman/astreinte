@@ -18,5 +18,7 @@ public interface AstreinteService extends GenericService<Astreinte> {
 
 	public List<Astreinte> checkChevechment(Astreinte astreinte);
 
-	public List<Astreinte> getByRessource(long idressource,long idqc);
+	public List<Astreinte> getByRessource(long idressource, long idqc);
+
+	void changeStaut(Astreinte astreinte, long idStatut);
 }

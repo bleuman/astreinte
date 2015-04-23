@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 
 @Controller
-@Path("/statut")
+@Path("/login")
 public class LoginController {
 	@Autowired
 	@Qualifier("authenticatorAuthorizatorImpl")

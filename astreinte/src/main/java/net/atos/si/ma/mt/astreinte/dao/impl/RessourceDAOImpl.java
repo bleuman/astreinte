@@ -5,6 +5,7 @@ import java.util.List;
 import net.atos.si.ma.mt.astreinte.dao.RessourceDAO;
 import net.atos.si.ma.mt.astreinte.model.Ressource;
 import net.atos.si.ma.mt.auth2.LoginService;
+import net.atos.si.ma.mt.auth2.Principale;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +27,7 @@ public class RessourceDAOImpl extends GenericHibernateDAO<Ressource> implements
 	}
 
 	@Override
-	public String checkLogin(String login, String password) {
+	public Principale checkLogin(String login, String password) {
 		List<Ressource> result = getCurrentSession()
 				.createQuery("from Ressource Where login=:login")
 				.setString("login", login).list();
@@ -36,8 +37,11 @@ public class RessourceDAOImpl extends GenericHibernateDAO<Ressource> implements
 
 			Ressource registerFound = (Ressource) result.get(0);
 			if (registerFound != null
-					&& registerFound.getPassword().equals(password))
-				return registerFound.getRole();
+					&& registerFound.getPassword().equals(password)){
+				Principale principale = new Principale(registerFound.getLogin(),registerFound.getRole(),null,registerFound.getId());
+				
+				return principale;
+			}
 			else
 
 				return null;

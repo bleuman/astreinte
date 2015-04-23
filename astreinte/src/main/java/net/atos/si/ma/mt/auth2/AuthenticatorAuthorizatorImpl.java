@@ -1,22 +1,30 @@
 package net.atos.si.ma.mt.auth2;
 
+import java.io.IOException;
+import java.lang.annotation.Target;
 import java.lang.reflect.Method;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.Response;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.aspectj.util.GenericSignature.ClassSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.auth0.jwt.JWTSigner;
 import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.JWTVerifyException;
 
 @Aspect
 @Service
@@ -29,7 +37,7 @@ public class AuthenticatorAuthorizatorImpl implements AuthenticatorAuthorizator 
 	@Autowired
 	@Qualifier("loginServiceImpl")
 	private LoginService loginService;
-	private int expire = 600;
+	private int expire = 3000;
 
 	public int getExpire() {
 		return expire;
@@ -59,7 +67,7 @@ public class AuthenticatorAuthorizatorImpl implements AuthenticatorAuthorizator 
 
 	}
 
-	@Around("@annotation(net.atos.si.ma.mt.auth2.AllowedRoles)")
+	@Around("execution(* net.atos.si.ma.mt.astreinte.web.controller.AstreinteController.*(..)) || @annotation(net.atos.si.ma.mt.auth2.AllowedRoles)")
 	public Object canDo(ProceedingJoinPoint proceedingJoinPoint)
 			throws AuthorizationException {
 		Object value = null;
@@ -73,22 +81,43 @@ public class AuthenticatorAuthorizatorImpl implements AuthenticatorAuthorizator 
 					if (role != null && !role.trim().equals("")) {
 						MethodSignature signature = (MethodSignature) proceedingJoinPoint
 								.getSignature();
+					
 						Method method = signature.getMethod();
+						String classRoles = "*";
+						String roles = "*";
+						Class clazz=method.getDeclaringClass();
+						AllowedRoles allowedRolesClass = clazz.getClass().getAnnotation(AllowedRoles.class);
 						AllowedRoles allowedRoles = method
 								.getAnnotation(AllowedRoles.class);
-						String roles = allowedRoles.roles();
-						if (!roles.equals("*") && !roles.contains(role)) {
+						if (allowedRolesClass != null)
+							classRoles = allowedRolesClass.roles();
+						if (allowedRoles != null)
+							roles = allowedRoles.roles();
+
+						if (!(roles.equals("*") || roles.contains(role) || (roles
+								.equals("*") && (classRoles.equals("*") || classRoles
+								.contains(role))))) {
 							throw new AuthorizationException(
-									"Acces no authorised");
+									"Acces no authorised",
+									Response.Status.NO_CONTENT.getStatusCode());
 						}
 					}
+				} else {
+					throw new AuthorizationException("User no connected",
+							Response.Status.PRECONDITION_FAILED.getStatusCode());
 				}
+				break;
 			}
 		}
 		try {
 			value = proceedingJoinPoint.proceed();
 		} catch (Throwable e) {
-			throw new AuthorizationException(e.getMessage());
+			if (e instanceof AuthorizationException) {
+				AuthorizationException authe = (AuthorizationException) e;
+				throw authe;
+			} else
+				throw new AuthorizationException(e.getMessage(),
+						Response.Status.PRECONDITION_FAILED.getStatusCode());
 		}
 		return value;
 	}
@@ -96,11 +125,11 @@ public class AuthenticatorAuthorizatorImpl implements AuthenticatorAuthorizator 
 	public Principale login(String login, String password)
 			throws AuthorizationException {
 		try {
-			String role = loginService.checkLogin(login, password);
-			if (role == null) {
-				throw new AuthorizationException("Login incorect");
+			Principale principale = loginService.checkLogin(login, password);
+			if (principale == null) {
+				throw new AuthorizationException("Login incorect",
+						Response.Status.FORBIDDEN.getStatusCode());
 			} else {
-				Principale principale = new Principale(login, role, null);
 				HashMap<String, Object> claims = new HashMap<String, Object>();
 				claims.put(PRINCIPAL, principale);
 				String authToken = signer.sign(claims, new JWTSigner.Options()
@@ -110,7 +139,8 @@ public class AuthenticatorAuthorizatorImpl implements AuthenticatorAuthorizator 
 
 			}
 		} catch (Exception e) {
-			throw new AuthorizationException(e.getMessage());
+			throw new AuthorizationException(e.getMessage(),
+					Response.Status.FORBIDDEN.getStatusCode());
 		}
 
 	}
@@ -128,8 +158,14 @@ public class AuthenticatorAuthorizatorImpl implements AuthenticatorAuthorizator 
 						String token = parts[1];
 						Map<String, Object> decoded = verifier.verify(token);
 						Object pricipalObject = decoded.get(PRINCIPAL);
-						if (pricipalObject instanceof Principale) {
-							Principale principale = (Principale) pricipalObject;
+						if (pricipalObject instanceof Map<?, ?>) {
+							Map<?, ?> principaleMap = (Map<?, ?>) pricipalObject;
+							Principale principale = new Principale();
+							principale.setLogin((String) principaleMap
+									.get("login"));
+							principale.setRole((String) principaleMap
+									.get("role"));
+
 							return principale;
 						} else {
 							return null;
@@ -138,8 +174,11 @@ public class AuthenticatorAuthorizatorImpl implements AuthenticatorAuthorizator 
 					}
 				}
 			}
-		} catch (Exception e) {
-			throw new AuthorizationException(e.getMessage());
+		} catch (InvalidKeyException | NoSuchAlgorithmException
+				| IllegalStateException | SignatureException | IOException
+				| JWTVerifyException e) {
+			throw new AuthorizationException(e.getMessage(),
+					Response.Status.PRECONDITION_FAILED.getStatusCode());
 		}
 		return null;
 	}

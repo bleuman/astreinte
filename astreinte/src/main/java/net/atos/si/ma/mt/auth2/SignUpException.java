@@ -5,7 +5,7 @@ import javax.ws.rs.core.Response;
 
 import net.atos.si.ma.mt.astreinte.model.ErrorBean;
 
-public class AuthorizationException extends WebApplicationException {
+public class SignUpException extends WebApplicationException {
 	/**
 	 * 
 	 */
@@ -21,8 +21,16 @@ public class AuthorizationException extends WebApplicationException {
 		this.message = message;
 	}
 
+//	public AuthorizationException(String message) {
+//
+//		super(Response
+//				.status(Response.Status.NOT_FOUND)
+//				.entity(new ErrorBean(message, Response.Status.NOT_FOUND
+//						.getStatusCode())).build());
+//		this.message = message;
+//	}
 
-	public AuthorizationException(String message, int status) {
+	public SignUpException(String message, int status) {
 
 		super(Response.status(status).entity(new ErrorBean(message, status))
 				.build());

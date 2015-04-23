@@ -11,14 +11,21 @@ import org.codehaus.jackson.map.DeserializationContext;
 import org.codehaus.jackson.map.JsonDeserializer;
 
 public class TimeDeserializer extends JsonDeserializer<Date> {
-	private static SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:00");
+	private static SimpleDateFormat formatterMin = new SimpleDateFormat("HH:mm");
+	private static SimpleDateFormat formatterSec = new SimpleDateFormat(
+			"HH:mm:ss");
 
 	@Override
 	public Date deserialize(JsonParser jsonparser, DeserializationContext arg1)
 			throws IOException, JsonProcessingException {
 		// TODO Auto-generated method stub
 		try {
-			return formatter.parse(jsonparser.getText());
+			String text = jsonparser.getText();
+			if (text.length() == 5)
+				return formatterMin.parse(text);
+			if (text.length() == 8)
+				return formatterSec.parse(text);
+			return new Date();
 		} catch (ParseException e) {
 			return new Date();
 		}

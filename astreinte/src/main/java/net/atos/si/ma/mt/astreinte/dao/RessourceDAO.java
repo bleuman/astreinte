@@ -1,10 +1,11 @@
 package net.atos.si.ma.mt.astreinte.dao;
 
 import net.atos.si.ma.mt.astreinte.model.Ressource;
+import net.atos.si.ma.mt.auth2.Principale;
 
 public interface RessourceDAO extends GenericDAO<Ressource> {
 
 	Ressource find(long id);
 
-	String checkLogin(String login, String password);
+	Principale checkLogin(String login, String password);
 }
