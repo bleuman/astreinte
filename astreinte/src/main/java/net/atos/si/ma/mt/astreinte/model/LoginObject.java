@@ -9,4 +9,10 @@ public class LoginObject {
 	public String login;
 	@XmlElement
 	public String password;
+	@XmlElement
+	public String epassword;
+	@XmlElement
+	public String npassword;
+	@XmlElement
+	public String cpassword;
 }

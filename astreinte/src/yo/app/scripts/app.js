@@ -31,6 +31,9 @@ angular.module(
 			}).when('/ressource', {
 				templateUrl : 'views/ressource.html',
 				controller : 'RessourceCtrl'
+			}).when('/change', {
+				templateUrl : 'views/changepassword.html',
+				controller : 'ChangePassWordCtrl'
 			}).otherwise({
 				template : "This doesn't exist!"
 			});
